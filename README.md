@@ -8,18 +8,18 @@ Requiere Node >= 22.23.4 (lo exige Astro 7.4).
 
 ```bash
 npm install
-CONTACT_EMAIL=tu@correo.cl npm run dev
+npm run dev
 ```
 
-`CONTACT_EMAIL` es obligatorio: sin él, la compilación falla.
+El correo de contacto está en `src/pages/index.astro` (`contactEmail`).
 
 ## Despliegue (CI/CD con Workers Builds)
 
 Cada push a `main` dispara en Cloudflare:
 
-1. `npm run build`: Astro genera `dist/` (necesita la variable de build `CONTACT_EMAIL`).
-2. `npx wrangler deploy`: sube `dist/` como assets del Worker `oferta-medios` (ver `wrangler.jsonc`).
+1. `npm run build`: Astro genera `dist/`.
+2. `npx wrangler deploy`: sube `dist/` como assets del Worker `oferta-medios` y el script `worker/index.js`, que sirve las capturas de `/media/` desde KV (ver `wrangler.jsonc`).
 
 Sitio: https://oferta-medios.fabian-jeldes.workers.dev
 
-Para publicar a mano desde tu computador: `CONTACT_EMAIL=tu@correo.cl npm run deploy`.
+Para publicar a mano desde tu computador: `npm run deploy`.

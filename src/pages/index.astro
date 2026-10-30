@@ -4,10 +4,8 @@ import BrowserFrame from '../components/BrowserFrame.astro';
 import PhoneFrame from '../components/PhoneFrame.astro';
 import Ticker from '../components/Ticker.astro';
 
-const contactEmail = import.meta.env.CONTACT_EMAIL;
-if (!contactEmail) {
-  throw new Error('Falta CONTACT_EMAIL: define el correo de contacto antes de compilar.');
-}
+// El correo es público: aparece en cada enlace de contacto de la página.
+const contactEmail = 'fabian.jeldes@gmail.com';
 
 const contactHref = `mailto:${contactEmail}?subject=${encodeURIComponent('Quiero conversar sobre el sitio de mi medio')}`;
 
