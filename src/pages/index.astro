@@ -35,6 +35,22 @@ const plans = [
   },
 ];
 
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: 'Sitios y CMS para medios',
+  description: 'Sitio web rápido, CMS a la medida de la redacción y soporte técnico mensual para medios de comunicación.',
+  url: Astro.site.href,
+  email: contactEmail,
+  areaServed: { '@type': 'Country', name: 'Chile' },
+  offers: plans.map((plan) => ({
+    '@type': 'Offer',
+    name: `Plan ${plan.name}`,
+    price: plan.price.replace('USD ', ''),
+    priceCurrency: 'USD',
+  })),
+};
+
 const steps = [
   { title: 'Conversamos 20 minutos', text: 'Me cuentas cómo trabaja tu redacción y qué te frena hoy.' },
   { title: 'Migramos tu contenido', text: 'Traemos tus notas, autores e imágenes desde WordPress u otra plataforma.' },
@@ -44,9 +60,10 @@ const steps = [
 ---
 
 <Base
-  title="Sitios y CMS para medios independientes"
-  description="Sitio rápido, CMS a la medida de tu redacción y soporte técnico por una cuota mensual fija."
+  title="Sitio web y CMS para medios de comunicación en Chile"
+  description="Sitio rápido, CMS a la medida de tu redacción y soporte técnico por una cuota mensual fija. Para revistas, medios regionales y newsletters en Chile."
 >
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   <header class="hero wrap">
     <p class="label">* Para revistas, medios regionales y newsletters</p>
     <h1>Tu medio, con un sitio rápido y un CMS que tu redacción entiende</h1>
