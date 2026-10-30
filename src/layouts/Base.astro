@@ -1,0 +1,184 @@
+---
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap"
+    />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  /* Design system taken from Revista ZUN (cms-zun/frontend/src/layouts/Layout.astro):
+     Manrope + DM Mono, white paper, one red accent, three spacing steps. */
+  :root {
+    --bg: #ffffff;
+    --rojo: #ff262a;
+    --celeste: #f4f6ff;
+    --gris-cielo: #eceff4;
+    --text: #1f1f1f;
+    --negro: #111111;
+    --gris: #565656;
+    --line: rgba(0, 0, 0, 0.1);
+
+    --gap-s: 20px;
+    --gap-m: 24px;
+    --gap-l: 48px;
+
+    --font-body: 'Manrope', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+
+    --container-max: 1120px;
+    --container-pad: clamp(16px, 4vw, 48px);
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --gap-s: 24px;
+      --gap-m: 40px;
+      --gap-l: 80px;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    text-rendering: geometricPrecision;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    margin-top: 0;
+    color: var(--text);
+  }
+
+  h1 {
+    font-size: 3.625rem;
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+  }
+
+  h2 {
+    font-size: 3rem;
+    line-height: 1.15;
+    font-weight: 600;
+    letter-spacing: -0.05em;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    line-height: 1.2;
+    font-weight: 500;
+    letter-spacing: -0.05em;
+  }
+
+  p,
+  li {
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  p {
+    margin: 0 0 1.2rem;
+  }
+
+  @media (min-width: 1024px) {
+    p,
+    li {
+      font-size: 1.125rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2.75rem;
+    }
+
+    h2 {
+      font-size: 2.25rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+    }
+  }
+
+  a {
+    color: inherit;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  a:focus-visible {
+    outline: 3px solid var(--rojo);
+    outline-offset: 2px;
+  }
+
+  /* DM Mono label, the ZUN h5/h6 style. */
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1.08;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gris);
+    margin: 0 0 var(--gap-s);
+  }
+
+  /* ZUN nav pill: mono, uppercase, turns red on hover. */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 20px;
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text);
+    border: 1px solid var(--text);
+    border-radius: 100px;
+  }
+
+  .pill--filled {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .pill:hover {
+    background: var(--rojo);
+    border-color: var(--rojo);
+    color: #fff;
+  }
+</style>

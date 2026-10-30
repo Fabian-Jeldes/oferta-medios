@@ -1,0 +1,321 @@
+---
+import Base from '../layouts/Base.astro';
+
+const contactEmail = import.meta.env.CONTACT_EMAIL;
+if (!contactEmail) {
+  throw new Error('Falta CONTACT_EMAIL: define el correo de contacto antes de compilar.');
+}
+
+const contactHref = `mailto:${contactEmail}?subject=${encodeURIComponent('Quiero conversar sobre el sitio de mi medio')}`;
+
+const plans = [
+  {
+    name: 'Esencial',
+    price: 'USD 150',
+    audience: 'Revistas y medios pequeños',
+    features: [
+      'Sitio rápido en Astro con tu identidad',
+      'CMS Strapi pensado para tu redacción',
+      'Hosting, dominio y respaldos',
+      '2 horas de cambios al mes',
+    ],
+    featured: false,
+  },
+  {
+    name: 'Medio',
+    price: 'USD 300',
+    audience: 'Medios con suscriptores o anunciantes',
+    features: [
+      'Todo lo del plan Esencial',
+      'Newsletter integrada al sitio',
+      'Membresías y donaciones',
+      '6 horas de cambios al mes',
+    ],
+    featured: true,
+  },
+];
+
+const steps = [
+  { title: 'Conversamos 20 minutos', text: 'Me cuentas cómo trabaja tu redacción y qué te frena hoy.' },
+  { title: 'Migramos tu contenido', text: 'Traemos tus notas, autores e imágenes desde WordPress u otra plataforma.' },
+  { title: 'Tu equipo publica', text: 'Una hora de capacitación y tu redacción queda publicando sola.' },
+  { title: 'Yo me encargo del resto', text: 'Hosting, actualizaciones, seguridad y cambios mes a mes.' },
+];
+---
+
+<Base
+  title="Sitios y CMS para medios independientes"
+  description="Sitio rápido, CMS a la medida de tu redacción y soporte técnico por una cuota mensual fija."
+>
+  <header class="hero wrap">
+    <p class="label">* Para revistas, medios regionales y newsletters</p>
+    <h1>Tu medio, con un sitio rápido y un CMS que tu redacción entiende</h1>
+    <p class="lead">
+      Diseño, CMS, hosting y soporte por una cuota mensual fija. Tú te ocupas del periodismo; yo, de que el sitio
+      funcione.
+    </p>
+    <a class="pill pill--filled" href={contactHref}>Agenda una conversación</a>
+  </header>
+
+  <main>
+    <section class="wrap problem">
+      <p class="label">* El problema</p>
+      <h2>¿Te suena familiar?</h2>
+      <ul class="rule-list">
+        <li>WordPress lleno de plugins que nadie se atreve a actualizar.</li>
+        <li>Un sitio lento que espanta lectores desde el celular.</li>
+        <li>Cada cambio de diseño depende de un técnico que no siempre responde.</li>
+        <li>Newsletter, donaciones y sitio viviendo en herramientas separadas.</li>
+      </ul>
+    </section>
+
+    <section class="case">
+      <div class="wrap">
+        <p class="label">* Caso real / Revista ZUN</p>
+        <img class="wordmark" src="/zun-wordmark.svg" alt="Revista ZUN" width="1392" height="199" />
+        <h2>De WordPress a un sitio hecho a su medida</h2>
+        <p class="case-note">Esta página usa el mismo sistema de diseño que construimos para la revista.</p>
+        <div class="case-grid">
+          <div>
+            <h3>El punto de partida</h3>
+            <p>
+              Una revista digital en WordPress que necesitaba más control sobre su diseño y una forma más simple de
+              publicar.
+            </p>
+          </div>
+          <div>
+            <h3>Lo que construimos</h3>
+            <ul class="rule-list">
+              <li>Sitio nuevo en Astro, servido desde Cloudflare.</li>
+              <li>CMS Strapi con formularios ordenados como trabaja la redacción.</li>
+              <li>Migración completa de las notas existentes.</li>
+              <li>Newsletter y donaciones en cada artículo.</li>
+              <li>Portada y convocatorias editables desde el CMS, sin tocar código.</li>
+            </ul>
+          </div>
+        </div>
+        <a class="pill" href="https://revistazun.com">Visita revistazun.com</a>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <p class="label">* Planes</p>
+      <h2>Una cuota fija al mes</h2>
+      <p class="muted">Pago inicial de USD 400 por diseño, migración y capacitación. Sin contratos de permanencia.</p>
+      <div class="plans">
+        {
+          plans.map((plan) => (
+            <article class:list={['plan', { featured: plan.featured }]}>
+              <p class="label">{plan.name}</p>
+              <p class="price">
+                {plan.price}
+                <span>/mes</span>
+              </p>
+              <p class="muted">{plan.audience}</p>
+              <ul class="rule-list">
+                {plan.features.map((feature) => (
+                  <li>{feature}</li>
+                ))}
+              </ul>
+              <a class:list={['pill', { 'pill--filled': plan.featured }]} href={contactHref}>
+                Quiero el plan {plan.name}
+              </a>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="wrap">
+      <p class="label">* Cómo funciona</p>
+      <h2>Cuatro pasos</h2>
+      <ol class="steps">
+        {
+          steps.map((step, i) => (
+            <li>
+              <p class="label">0{i + 1}</p>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="cta">
+      <div class="wrap">
+        <p class="label">* Auditoría gratuita</p>
+        <h2>¿Revisamos tu sitio?</h2>
+        <p>Te envío una auditoría con tres mejoras concretas para tu sitio actual, la contrates o no.</p>
+        <a class="pill pill--light" href={contactHref}>Pide tu auditoría</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    <p class="label">Fabián Jeldes / Desarrollo web para medios</p>
+  </footer>
+</Base>
+
+<style>
+  .wrap {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding-inline: var(--container-pad);
+  }
+
+  section {
+    padding-block: var(--gap-l);
+  }
+
+  .muted {
+    color: var(--gris);
+  }
+
+  .hero {
+    padding-block: calc(var(--gap-l) * 1.5) var(--gap-l);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .hero h1 {
+    max-width: 16ch;
+    margin-bottom: var(--gap-m);
+  }
+
+  .lead {
+    color: var(--gris);
+    max-width: 48ch;
+    margin-bottom: var(--gap-m);
+  }
+
+  .rule-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--gap-m);
+    max-width: 60ch;
+  }
+
+  .rule-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .case {
+    background: var(--celeste);
+  }
+
+  .wordmark {
+    display: block;
+    width: min(320px, 70%);
+    height: auto;
+    margin-bottom: var(--gap-m);
+  }
+
+  .case-note {
+    color: var(--gris);
+  }
+
+  .case-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: var(--gap-m);
+    margin-block: var(--gap-m);
+  }
+
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--gap-m);
+    margin-top: var(--gap-m);
+  }
+
+  .plan {
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: var(--gap-m);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .plan.featured {
+    border-color: var(--text);
+  }
+
+  .plan .rule-list {
+    flex: 1;
+    width: 100%;
+  }
+
+  .price {
+    font-size: 3rem;
+    font-weight: 600;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    margin-bottom: var(--gap-s);
+  }
+
+  .price span {
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--gris);
+  }
+
+  .steps {
+    list-style: none;
+    padding: 0;
+    margin: var(--gap-m) 0 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--gap-m);
+  }
+
+  .steps li {
+    border-top: 1px solid var(--text);
+    padding-top: var(--gap-s);
+  }
+
+  .steps p:last-child {
+    color: var(--gris);
+    margin: 0;
+  }
+
+  .cta {
+    background: var(--negro);
+  }
+
+  .cta h2,
+  .cta p {
+    color: #fff;
+  }
+
+  .cta .label {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .cta p:not(.label) {
+    max-width: 50ch;
+  }
+
+  .pill--light {
+    color: #fff;
+    border-color: #fff;
+  }
+
+  footer {
+    padding-block: var(--gap-m);
+  }
+
+  footer .label {
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .case-grid,
+    .plans,
+    .steps {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
