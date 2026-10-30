@@ -1,0 +1,34 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  eager?: boolean;
+}
+
+const { src, alt, eager = false } = Astro.props;
+---
+
+<figure class="phone">
+  <img src={src} alt={alt} width="780" height="1688" loading={eager ? 'eager' : 'lazy'} decoding="async" />
+</figure>
+
+<style>
+  .phone {
+    margin: 0;
+    aspect-ratio: 390 / 844;
+    border: 5px solid var(--negro);
+    border-radius: 22px;
+    overflow: hidden;
+    background: var(--negro);
+    box-shadow: 0 18px 36px -10px rgba(0, 0, 0, 0.3);
+  }
+
+  .phone img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 17px;
+  }
+</style>

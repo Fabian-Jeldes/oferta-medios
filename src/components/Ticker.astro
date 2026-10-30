@@ -1,0 +1,69 @@
+---
+// Marquesina de Revista ZUN: la lista se duplica para que el desplazamiento sea continuo.
+interface Props {
+  items: string[];
+}
+
+const { items } = Astro.props;
+const loop = [...items, ...items];
+---
+
+<div class="ticker" aria-label={items.join(', ')}>
+  <ul class="ticker-track" aria-hidden="true">
+    {loop.map((item) => <li>{item}</li>)}
+  </ul>
+</div>
+
+<style>
+  .ticker {
+    overflow: hidden;
+    box-shadow:
+      inset 0 1px 0 var(--line),
+      inset 0 -1px 0 var(--line);
+  }
+
+  .ticker-track {
+    display: flex;
+    width: max-content;
+    margin: 0;
+    padding: 22px 0;
+    list-style: none;
+    animation: ticker-scroll 40s linear infinite;
+  }
+
+  .ticker:hover .ticker-track {
+    animation-play-state: paused;
+  }
+
+  .ticker-track li {
+    display: flex;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .ticker-track li::after {
+    content: '*';
+    color: var(--rojo);
+    margin: 0 32px;
+  }
+
+  @keyframes ticker-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ticker-track {
+      animation: none;
+    }
+  }
+</style>

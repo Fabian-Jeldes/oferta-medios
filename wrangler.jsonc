@@ -1,8 +1,8 @@
 {
-  // Worker que sirve el build estático de Astro (carpeta dist).
+  // Worker que sirve el build estático de Astro (carpeta dist) y las capturas guardadas en KV.
   "name": "oferta-medios",
+  "main": "worker/index.js",
   "compatibility_date": "2026-10-01",
-  "assets": {
-    "directory": "./dist"
-  }
+  "assets": { "directory": "./dist", "binding": "ASSETS" },
+  "kv_namespaces": [{ "binding": "MEDIA", "id": "980f2664d5594955964f6d863041c653" }]
 }

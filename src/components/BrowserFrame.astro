@@ -1,0 +1,93 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  domain: string;
+  eager?: boolean;
+}
+
+const { src, alt, domain, eager = false } = Astro.props;
+---
+
+<figure class="browser">
+  <div class="browser-bar">
+    <span class="dots"><i></i><i></i><i></i></span>
+    <span class="address">{domain}</span>
+  </div>
+  <div class="browser-screen">
+    <img src={src} alt={alt} width="1440" height="900" loading={eager ? 'eager' : 'lazy'} decoding="async" />
+  </div>
+</figure>
+
+<style>
+  .browser {
+    margin: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg);
+    border: 0.5px solid #8f96b5;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .browser-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--celeste);
+    border-bottom: 0.5px solid #8f96b5;
+  }
+
+  .dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .dots i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #c9cee0;
+  }
+
+  .dots i:first-child {
+    background: var(--rojo);
+  }
+
+  .address {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--gris);
+  }
+
+  .browser-screen {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+
+  .browser-screen img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  :global(a:hover) .browser {
+    box-shadow: 0 14px 28px -6px rgba(0, 0, 0, 0.14);
+  }
+
+  :global(a:hover) .browser-screen img {
+    transform: scale(1.06);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .browser,
+    .browser-screen img {
+      transition: none;
+    }
+  }
+</style>

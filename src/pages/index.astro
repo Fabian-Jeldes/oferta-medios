@@ -1,5 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
+import BrowserFrame from '../components/BrowserFrame.astro';
+import PhoneFrame from '../components/PhoneFrame.astro';
+import Ticker from '../components/Ticker.astro';
 
 const contactEmail = import.meta.env.CONTACT_EMAIL;
 if (!contactEmail) {
@@ -7,6 +10,33 @@ if (!contactEmail) {
 }
 
 const contactHref = `mailto:${contactEmail}?subject=${encodeURIComponent('Quiero conversar sobre el sitio de mi medio')}`;
+
+const projects = [
+  {
+    slug: 'zun',
+    name: 'Revista ZUN',
+    kind: 'Revista digital',
+    url: 'https://revistazun.com',
+    domain: 'revistazun.com',
+    text: 'Sitio editorial con CMS a la medida de la redacción, newsletter y donaciones en cada artículo.',
+  },
+  {
+    slug: 'ayr',
+    name: 'Arriaza & Ramírez Asociados',
+    kind: 'Estudio jurídico',
+    url: 'https://ayrlegal.cl',
+    domain: 'ayrlegal.cl',
+    text: 'Sitio para un estudio de derecho laboral, civil y de familia, pensado para agendar consultas.',
+  },
+  {
+    slug: 'psandrei',
+    name: 'Ps. Andrei Andrusco',
+    kind: 'Consulta de psicología',
+    url: 'https://psandrei.com',
+    domain: 'psandrei.com',
+    text: 'Sitio de consulta clínica con artículos de psicoeducación y agenda de horas.',
+  },
+];
 
 const plans = [
   {
@@ -48,20 +78,35 @@ const steps = [
   description="Sitio rápido, CMS a la medida de tu redacción y soporte técnico por una cuota mensual fija."
 >
   <header class="hero wrap">
-    <p class="label">* Para revistas, medios regionales y newsletters</p>
-    <h1>Tu medio, con un sitio rápido y un CMS que tu redacción entiende</h1>
-    <p class="lead">
-      Diseño, CMS, hosting y soporte por una cuota mensual fija. Tú te ocupas del periodismo; yo, de que el sitio
-      funcione.
-    </p>
-    <a class="cta" href={contactHref}>Agenda una conversación</a>
+    <div class="hero-text">
+      <p class="label reveal">* Para revistas, medios regionales y newsletters</p>
+      <h1 class="reveal" style="--delay: 80ms">Tu medio, con un sitio rápido y un CMS que tu redacción entiende</h1>
+      <p class="lead reveal" style="--delay: 160ms">
+        Diseño, CMS, hosting y soporte por una cuota mensual fija. Tú te ocupas del periodismo; yo, de que el sitio
+        funcione.
+      </p>
+      <div class="hero-actions reveal" style="--delay: 240ms">
+        <a class="cta" href={contactHref}>Agenda una conversación</a>
+        <a class="pill" href="#trabajos">Ver trabajos</a>
+      </div>
+    </div>
+    <div class="hero-showcase reveal" style="--delay: 200ms">
+      <BrowserFrame src="/media/trabajos/zun-desktop.jpg" alt="Portada de Revista ZUN" domain="revistazun.com" eager />
+      <div class="hero-phone">
+        <PhoneFrame src="/media/trabajos/zun-mobile.jpg" alt="Revista ZUN en el celular" eager />
+      </div>
+    </div>
   </header>
+
+  <Ticker
+    items={['Sitios rápidos', 'CMS a la medida', 'Hosting incluido', 'Newsletter y donaciones', 'Soporte mensual']}
+  />
 
   <main>
     <section class="wrap problem">
-      <p class="label">* El problema</p>
-      <h2>¿Te suena familiar?</h2>
-      <ul class="rule-list">
+      <p class="label reveal">* El problema</p>
+      <h2 class="reveal">¿Te suena familiar?</h2>
+      <ul class="rule-list hover-list reveal">
         <li>WordPress lleno de plugins que nadie se atreve a actualizar.</li>
         <li>Un sitio lento que espanta lectores desde el celular.</li>
         <li>Cada cambio de diseño depende de un técnico que no siempre responde.</li>
@@ -69,23 +114,53 @@ const steps = [
       </ul>
     </section>
 
+    <section class="wrap" id="trabajos">
+      <p class="label reveal">* Trabajos</p>
+      <h2 class="reveal">Sitios que ya están funcionando</h2>
+      <div class="projects">
+        {
+          projects.map((project, i) => (
+            <div class="reveal" style={`--delay: ${i * 100}ms`}>
+              <a class="project" href={project.url}>
+                <div class="project-media">
+                  <BrowserFrame
+                    src={`/media/trabajos/${project.slug}-desktop.jpg`}
+                    alt={`Sitio de ${project.name}`}
+                    domain={project.domain}
+                  />
+                  <div class="project-phone">
+                    <PhoneFrame src={`/media/trabajos/${project.slug}-mobile.jpg`} alt={`${project.name} en el celular`} />
+                  </div>
+                </div>
+                <p class="project-meta">
+                  {project.kind} / {project.domain}
+                </p>
+                <h3>{project.name}</h3>
+                <p class="project-text">{project.text}</p>
+              </a>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
     <section class="case">
       <div class="wrap">
-        <p class="label">* Caso real / Revista ZUN</p>
-        <img class="wordmark" src="/zun-wordmark.svg" alt="Revista ZUN" width="1392" height="199" />
-        <h2>De WordPress a un sitio hecho a su medida</h2>
-        <p class="case-note">Esta página usa el mismo sistema de diseño que construimos para la revista.</p>
+        <p class="label reveal">* Caso real / Revista ZUN</p>
+        <img class="wordmark reveal" src="/zun-wordmark.svg" alt="Revista ZUN" width="1392" height="199" />
+        <h2 class="reveal">De WordPress a un sitio hecho a su medida</h2>
+        <p class="case-note reveal">Esta página usa el mismo sistema de diseño que construimos para la revista.</p>
         <div class="case-grid">
-          <div>
+          <div class="reveal">
             <h3>El punto de partida</h3>
             <p>
               Una revista digital en WordPress que necesitaba más control sobre su diseño y una forma más simple de
               publicar.
             </p>
           </div>
-          <div>
+          <div class="reveal" style="--delay: 100ms">
             <h3>Lo que construimos</h3>
-            <ul class="rule-list">
+            <ul class="rule-list hover-list">
               <li>Sitio nuevo en Astro, servido desde Cloudflare.</li>
               <li>CMS Strapi con formularios ordenados como trabaja la redacción.</li>
               <li>Migración completa de las notas existentes.</li>
@@ -94,45 +169,47 @@ const steps = [
             </ul>
           </div>
         </div>
-        <a class="pill" href="https://revistazun.com">Visita revistazun.com</a>
+        <a class="pill reveal" href="https://revistazun.com">Visita revistazun.com</a>
       </div>
     </section>
 
     <section class="wrap">
-      <p class="label">* Planes</p>
-      <h2>Una cuota fija al mes</h2>
-      <p class="muted">Pago inicial de USD 400 por diseño, migración y capacitación. Sin contratos de permanencia.</p>
+      <p class="label reveal">* Planes</p>
+      <h2 class="reveal">Una cuota fija al mes</h2>
+      <p class="muted reveal">Pago inicial de USD 400 por diseño, migración y capacitación. Sin contratos de permanencia.</p>
       <div class="plans">
         {
-          plans.map((plan) => (
-            <article class:list={['plan', { featured: plan.featured }]}>
-              <p class="label">{plan.name}</p>
-              <p class="price">
-                {plan.price}
-                <span>/mes</span>
-              </p>
-              <p class="muted">{plan.audience}</p>
-              <ul class="rule-list">
-                {plan.features.map((feature) => (
-                  <li>{feature}</li>
-                ))}
-              </ul>
-              <a class:list={[plan.featured ? 'cta' : 'pill']} href={contactHref}>
-                Quiero el plan {plan.name}
-              </a>
-            </article>
+          plans.map((plan, i) => (
+            <div class="reveal" style={`--delay: ${i * 100}ms`}>
+              <article class:list={['plan', { featured: plan.featured }]}>
+                <p class="label">{plan.name}</p>
+                <p class="price">
+                  {plan.price}
+                  <span>/mes</span>
+                </p>
+                <p class="muted">{plan.audience}</p>
+                <ul class="rule-list">
+                  {plan.features.map((feature) => (
+                    <li>{feature}</li>
+                  ))}
+                </ul>
+                <a class:list={[plan.featured ? 'cta' : 'pill']} href={contactHref}>
+                  Quiero el plan {plan.name}
+                </a>
+              </article>
+            </div>
           ))
         }
       </div>
     </section>
 
     <section class="wrap">
-      <p class="label">* Cómo funciona</p>
-      <h2>Cuatro pasos</h2>
+      <p class="label reveal">* Cómo funciona</p>
+      <h2 class="reveal">Cuatro pasos</h2>
       <ol class="steps">
         {
           steps.map((step, i) => (
-            <li>
+            <li class="reveal" style={`--delay: ${i * 80}ms`}>
               <p class="label">0{i + 1}</p>
               <h3>{step.title}</h3>
               <p>{step.text}</p>
@@ -144,10 +221,10 @@ const steps = [
 
     <section class="closing">
       <div class="wrap">
-        <p class="label">* Auditoría gratuita</p>
-        <h2>¿Revisamos tu sitio?</h2>
-        <p>Te envío una auditoría con tres mejoras concretas para tu sitio actual, la contrates o no.</p>
-        <a class="pill pill--light" href={contactHref}>Pide tu auditoría</a>
+        <p class="label reveal">* Auditoría gratuita</p>
+        <h2 class="reveal">¿Revisamos tu sitio?</h2>
+        <p class="reveal">Te envío una auditoría con tres mejoras concretas para tu sitio actual, la contrates o no.</p>
+        <a class="pill pill--light reveal" href={contactHref}>Pide tu auditoría</a>
       </div>
     </section>
   </main>
@@ -155,6 +232,7 @@ const steps = [
   <footer class="wrap">
     <nav class="footer-links">
       <a href={contactHref}>Escríbeme</a>
+      <a href="#trabajos">Trabajos</a>
       <a href="https://revistazun.com">Revista ZUN</a>
     </nav>
     <p class="footer-credit">Fabián Jeldes / Desarrollo web para medios</p>
@@ -176,20 +254,80 @@ const steps = [
     color: var(--gris);
   }
 
+  /* ---- Hero ---- */
   .hero {
+    display: grid;
+    grid-template-columns: 1fr 1.05fr;
+    align-items: center;
+    gap: var(--gap-l);
     padding-block: var(--gap-l);
-    border-bottom: 1px solid var(--line);
   }
 
   .hero h1 {
-    max-width: 16ch;
     margin-bottom: var(--gap-m);
   }
 
   .lead {
     color: var(--gris);
-    max-width: 48ch;
+    max-width: 44ch;
     margin-bottom: var(--gap-m);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .hero-showcase {
+    position: relative;
+    padding-bottom: var(--gap-m);
+    padding-right: var(--gap-m);
+  }
+
+  .hero-phone {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 26%;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  /* ---- Problem list: ZUN red bar on hover ---- */
+  .hover-list li {
+    position: relative;
+    padding-left: 0;
+    transition: padding-left 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .hover-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 3px;
+    background: var(--rojo);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+  }
+
+  .hover-list li:hover {
+    padding-left: 16px;
+  }
+
+  .hover-list li:hover::before {
+    transform: scaleY(1);
   }
 
   .rule-list {
@@ -204,6 +342,70 @@ const steps = [
     border-bottom: 1px solid var(--line);
   }
 
+  /* ---- Projects: ZUN image card ---- */
+  .projects {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--gap-m);
+    margin-top: var(--gap-m);
+  }
+
+  .project {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .project:hover {
+    transform: translateY(-4px);
+  }
+
+  .project-media {
+    position: relative;
+    padding: 0 var(--gap-s) var(--gap-s) 0;
+    margin-bottom: 8px;
+  }
+
+  .project-phone {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 28%;
+    transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .project:hover .project-phone {
+    transform: translateY(-8px) rotate(2deg);
+  }
+
+  .project-meta {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--negro);
+    opacity: 0.6;
+  }
+
+  .project h3 {
+    margin: 0;
+    transition: color 0.25s ease;
+  }
+
+  .project:hover h3 {
+    color: var(--rojo);
+  }
+
+  .project-text {
+    margin: 0;
+    color: var(--gris);
+  }
+
+  /* ---- Case ---- */
   .case {
     background: var(--celeste);
   }
@@ -226,6 +428,7 @@ const steps = [
     margin-block: var(--gap-m);
   }
 
+  /* ---- Plans: ZUN text card ---- */
   .plans {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -234,16 +437,32 @@ const steps = [
   }
 
   .plan {
+    height: 100%;
     border: 0.5px solid #8f96b5;
     border-radius: 8px;
     padding: var(--gap-m);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    background: var(--bg);
+    transition:
+      border-color 0.25s ease,
+      box-shadow 0.25s ease,
+      transform 0.25s ease;
+  }
+
+  .plan:hover {
+    border-color: var(--rojo);
+    box-shadow: 0 10px 26px -12px rgba(0, 0, 0, 0.18);
+    transform: translateY(-2px);
   }
 
   .plan.featured {
     border: 1px solid var(--text);
+  }
+
+  .plan.featured:hover {
+    border-color: var(--rojo);
   }
 
   .plan .rule-list {
@@ -266,6 +485,7 @@ const steps = [
     color: var(--gris);
   }
 
+  /* ---- Steps ---- */
   .steps {
     list-style: none;
     padding: 0;
@@ -276,8 +496,26 @@ const steps = [
   }
 
   .steps li {
+    position: relative;
     border-top: 1px solid var(--text);
     padding-top: var(--gap-s);
+  }
+
+  .steps li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: -1px;
+    width: 100%;
+    height: 1px;
+    background: var(--rojo);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .steps li:hover::before {
+    transform: scaleX(1);
   }
 
   .steps p:last-child {
@@ -285,6 +523,7 @@ const steps = [
     margin: 0;
   }
 
+  /* ---- Closing band ---- */
   .closing {
     background: var(--negro);
   }
@@ -307,6 +546,7 @@ const steps = [
     border-color: #fff;
   }
 
+  /* ---- Footer ---- */
   footer {
     padding-block: var(--gap-m);
     text-align: center;
@@ -337,11 +577,33 @@ const steps = [
     margin: 0;
   }
 
+  @media (max-width: 1024px) {
+    .projects {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
   @media (max-width: 768px) {
+    .hero,
     .case-grid,
     .plans,
-    .steps {
+    .steps,
+    .projects {
       grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-phone {
+      animation: none;
+    }
+
+    .project,
+    .project-phone,
+    .plan,
+    .hover-list li,
+    .steps li::before {
+      transition: none;
     }
   }
 </style>
