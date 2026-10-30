@@ -54,7 +54,7 @@ const steps = [
       Diseño, CMS, hosting y soporte por una cuota mensual fija. Tú te ocupas del periodismo; yo, de que el sitio
       funcione.
     </p>
-    <a class="pill pill--filled" href={contactHref}>Agenda una conversación</a>
+    <a class="cta" href={contactHref}>Agenda una conversación</a>
   </header>
 
   <main>
@@ -117,7 +117,7 @@ const steps = [
                   <li>{feature}</li>
                 ))}
               </ul>
-              <a class:list={['pill', { 'pill--filled': plan.featured }]} href={contactHref}>
+              <a class:list={[plan.featured ? 'cta' : 'pill']} href={contactHref}>
                 Quiero el plan {plan.name}
               </a>
             </article>
@@ -142,7 +142,7 @@ const steps = [
       </ol>
     </section>
 
-    <section class="cta">
+    <section class="closing">
       <div class="wrap">
         <p class="label">* Auditoría gratuita</p>
         <h2>¿Revisamos tu sitio?</h2>
@@ -153,7 +153,11 @@ const steps = [
   </main>
 
   <footer class="wrap">
-    <p class="label">Fabián Jeldes / Desarrollo web para medios</p>
+    <nav class="footer-links">
+      <a href={contactHref}>Escríbeme</a>
+      <a href="https://revistazun.com">Revista ZUN</a>
+    </nav>
+    <p class="footer-credit">Fabián Jeldes / Desarrollo web para medios</p>
   </footer>
 </Base>
 
@@ -173,7 +177,7 @@ const steps = [
   }
 
   .hero {
-    padding-block: calc(var(--gap-l) * 1.5) var(--gap-l);
+    padding-block: var(--gap-l);
     border-bottom: 1px solid var(--line);
   }
 
@@ -230,8 +234,8 @@ const steps = [
   }
 
   .plan {
-    border: 1px solid var(--line);
-    border-radius: 2px;
+    border: 0.5px solid #8f96b5;
+    border-radius: 8px;
     padding: var(--gap-m);
     display: flex;
     flex-direction: column;
@@ -239,7 +243,7 @@ const steps = [
   }
 
   .plan.featured {
-    border-color: var(--text);
+    border: 1px solid var(--text);
   }
 
   .plan .rule-list {
@@ -281,20 +285,20 @@ const steps = [
     margin: 0;
   }
 
-  .cta {
+  .closing {
     background: var(--negro);
   }
 
-  .cta h2,
-  .cta p {
+  .closing h2,
+  .closing p {
     color: #fff;
   }
 
-  .cta .label {
+  .closing .label {
     color: rgba(255, 255, 255, 0.6);
   }
 
-  .cta p:not(.label) {
+  .closing p:not(.label) {
     max-width: 50ch;
   }
 
@@ -305,9 +309,31 @@ const steps = [
 
   footer {
     padding-block: var(--gap-m);
+    text-align: center;
   }
 
-  footer .label {
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: var(--gap-m);
+    margin-bottom: var(--gap-s);
+  }
+
+  .footer-links a,
+  .footer-credit {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+
+  .footer-links a:hover {
+    color: var(--rojo);
+  }
+
+  .footer-credit {
+    color: var(--gris);
     margin: 0;
   }
 

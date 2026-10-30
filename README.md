@@ -13,9 +13,9 @@ CONTACT_EMAIL=tu@correo.cl npm run dev
 
 `CONTACT_EMAIL` es obligatorio: sin él, la compilación falla.
 
-## Despliegue en Cloudflare Pages
+## Despliegue
 
-- Comando de build: `npm run build`
-- Carpeta de salida: `dist`
-- Variable de entorno: `CONTACT_EMAIL`
-- Versión de Node: la toma de `.nvmrc` (24)
+Publicado como Worker `oferta-medios` en la cuenta personal de Cloudflare:
+https://oferta-medios.fabian-jeldes.workers.dev
+
+El build (`dist/`) se empaqueta en un único módulo de Worker que sirve los archivos estáticos.

@@ -171,6 +171,32 @@ const { title, description } = Astro.props;
     border-radius: 100px;
   }
 
+  /* ZUN main call: red, rectangular, one per screen. */
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 24px;
+    border-radius: 6px;
+    background: var(--rojo);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .cta:hover {
+    background: var(--negro);
+  }
+
+  @media (max-width: 768px) {
+    .label {
+      font-size: 0.75rem;
+    }
+  }
+
   .pill--filled {
     background: var(--text);
     color: var(--bg);
