@@ -1,0 +1,8 @@
+{
+  // Worker que sirve el build estático de Astro (carpeta dist).
+  "name": "oferta-medios",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}

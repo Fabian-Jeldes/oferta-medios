@@ -13,9 +13,13 @@ CONTACT_EMAIL=tu@correo.cl npm run dev
 
 `CONTACT_EMAIL` es obligatorio: sin él, la compilación falla.
 
-## Despliegue
+## Despliegue (CI/CD con Workers Builds)
 
-Publicado como Worker `oferta-medios` en la cuenta personal de Cloudflare:
-https://oferta-medios.fabian-jeldes.workers.dev
+Cada push a `main` dispara en Cloudflare:
 
-El build (`dist/`) se empaqueta en un único módulo de Worker que sirve los archivos estáticos.
+1. `npm run build`: Astro genera `dist/` (necesita la variable de build `CONTACT_EMAIL`).
+2. `npx wrangler deploy`: sube `dist/` como assets del Worker `oferta-medios` (ver `wrangler.jsonc`).
+
+Sitio: https://oferta-medios.fabian-jeldes.workers.dev
+
+Para publicar a mano desde tu computador: `CONTACT_EMAIL=tu@correo.cl npm run deploy`.
