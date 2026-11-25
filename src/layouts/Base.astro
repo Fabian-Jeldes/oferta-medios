@@ -2,9 +2,22 @@
 interface Props {
   title: string;
   description: string;
+  image?: string;
+  canonicalUrl?: string;
+  siteName?: string;
 }
 
-const { title, description } = Astro.props;
+const {
+  title,
+  description,
+  image = '/og-card.svg',
+  canonicalUrl,
+  siteName = 'Fabián Jeldes — Software, Web y Datos',
+} = Astro.props;
+
+const siteUrl = Astro.site ? Astro.site.href : 'https://oferta-medios.fabian-jeldes.workers.dev';
+const canonical = canonicalUrl ?? (Astro.site ? new URL(Astro.url.pathname, Astro.site).href : new URL(Astro.url.pathname, siteUrl).href);
+const ogImageUrl = image.startsWith('http') ? image : new URL(image, siteUrl).href;
 ---
 
 <!doctype html>
@@ -13,16 +26,34 @@ const { title, description } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Google Fonts: Manrope + DM Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap"
     />
+
+    <!-- SEO & Metadata -->
     <title>{title}</title>
     <meta name="description" content={description} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:locale" content="es_CL" />
+    <meta property="og:site_name" content={siteName} />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
     <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
   <body>
@@ -45,25 +76,31 @@ const { title, description } = Astro.props;
 </html>
 
 <style is:global>
-  /* Design system taken from Revista ZUN (cms-zun/frontend/src/layouts/Layout.astro):
-     Manrope + DM Mono, white paper, one red accent, three spacing steps. */
+  /* Sistema de diseño editorial ZUN (Manrope + DM Mono, papel blanco, acento rojo #FF262A) */
   :root {
+    /* Paleta */
     --bg: #ffffff;
-    --rojo: #ff262a;
+    --blanco-cielo: #f9faff;
     --celeste: #f4f6ff;
     --gris-cielo: #eceff4;
+    --borde-card: #8f96b5;
+    --rojo: #ff262a;
     --text: #1f1f1f;
     --negro: #111111;
     --gris: #565656;
     --line: rgba(0, 0, 0, 0.1);
 
+    /* Ritmo vertical (Móvil por defecto) */
     --gap-s: 20px;
     --gap-m: 24px;
     --gap-l: 48px;
 
+    /* Tipografía */
+    --font-display: 'Manrope', sans-serif;
     --font-body: 'Manrope', sans-serif;
     --font-mono: 'DM Mono', monospace;
 
+    /* Layout */
     --container-max: 1120px;
     --container-pad: clamp(16px, 4vw, 48px);
   }
@@ -76,13 +113,32 @@ const { title, description } = Astro.props;
     }
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
   * {
     box-sizing: border-box;
   }
 
   body {
     margin: 0;
-    background: var(--bg);
+    background-color: var(--bg);
     color: var(--text);
     font-family: var(--font-body);
     text-rendering: geometricPrecision;
@@ -91,9 +147,11 @@ const { title, description } = Astro.props;
 
   h1,
   h2,
-  h3 {
+  h3,
+  h4 {
     margin-top: 0;
     color: var(--text);
+    text-wrap: balance;
   }
 
   h1 {
@@ -115,6 +173,13 @@ const { title, description } = Astro.props;
     line-height: 1.2;
     font-weight: 500;
     letter-spacing: -0.05em;
+  }
+
+  h4 {
+    font-size: 1.125rem;
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: -0.03em;
   }
 
   p,
@@ -146,6 +211,10 @@ const { title, description } = Astro.props;
     h3 {
       font-size: 1.25rem;
     }
+
+    h4 {
+      font-size: 1rem;
+    }
   }
 
   a {
@@ -153,12 +222,15 @@ const { title, description } = Astro.props;
     transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
   }
 
-  a:focus-visible {
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  summary:focus-visible {
     outline: 3px solid var(--rojo);
     outline-offset: 2px;
   }
 
-  /* DM Mono label, the ZUN h5/h6 style. */
+  /* Etiqueta monoespaciada (Kicker / H5 / H6) */
   .label {
     font-family: var(--font-mono);
     font-size: 0.875rem;
@@ -169,7 +241,13 @@ const { title, description } = Astro.props;
     margin: 0 0 var(--gap-s);
   }
 
-  /* ZUN nav pill: mono, uppercase, turns red on hover. */
+  @media (max-width: 768px) {
+    .label {
+      font-size: 0.75rem;
+    }
+  }
+
+  /* Píldora de navegación o acción secundaria */
   .pill {
     display: inline-flex;
     align-items: center;
@@ -184,43 +262,50 @@ const { title, description } = Astro.props;
     color: var(--text);
     border: 1px solid var(--text);
     border-radius: 100px;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   }
 
-  /* ZUN main call: red, rectangular, one per screen. */
+  .pill--filled {
+    background-color: var(--text);
+    color: var(--bg);
+  }
+
+  .pill--light {
+    color: #ffffff;
+    border-color: #ffffff;
+  }
+
+  .pill:hover,
+  .pill.active {
+    background-color: var(--rojo);
+    border-color: var(--rojo);
+    color: #ffffff;
+  }
+
+  /* Llamado a la acción principal */
   .cta {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 20px 24px;
     border-radius: 6px;
-    background: var(--rojo);
-    color: #fff;
+    background-color: var(--rojo);
+    color: #ffffff;
     font-family: var(--font-mono);
     font-size: 12px;
     letter-spacing: 1.2px;
     text-transform: uppercase;
     text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   .cta:hover {
-    background: var(--negro);
-  }
-
-  @media (max-width: 768px) {
-    .label {
-      font-size: 0.75rem;
-    }
-  }
-
-  .pill--filled {
-    background: var(--text);
-    color: var(--bg);
-  }
-
-  .pill:hover {
-    background: var(--rojo);
-    border-color: var(--rojo);
-    color: #fff;
+    background-color: var(--negro);
+    color: #ffffff;
   }
 
   /* Entrada al hacer scroll: sube 24px y aparece, con la curva de ZUN. */

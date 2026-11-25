@@ -1,0 +1,1402 @@
+---
+import Base from '../layouts/Base.astro';
+import BrowserFrame from '../components/BrowserFrame.astro';
+import PhoneFrame from '../components/PhoneFrame.astro';
+import Ticker from '../components/Ticker.astro';
+
+// El correo es público: aparece en cada enlace de contacto de la página.
+const contactEmail = import.meta.env.CONTACT_EMAIL || 'fabian.jeldes@gmail.com';
+const calendlyUrl = import.meta.env.PUBLIC_CALENDLY_URL;
+const whatsappNumber = import.meta.env.PUBLIC_WHATSAPP_NUMBER;
+
+const buildMailto = (subject: string, body?: string) => {
+  const params = new URLSearchParams();
+  params.set('subject', subject);
+  if (body) params.set('body', body);
+  return `mailto:${contactEmail}?${params.toString().replace(/\+/g, '%20')}`;
+};
+
+const heroMailto = buildMailto(
+  'Quiero conversar sobre el sitio de mi medio',
+  'Hola Fabián,\n\nMe gustaría conversar sobre el sitio de mi medio.\n\nNombre del medio: \nURL actual: \nLo que nos gustaría resolver o mejorar: \n'
+);
+
+const esencialMailto = buildMailto(
+  'Quiero el plan Esencial para mi medio',
+  'Hola Fabián,\n\nNos interesa el plan Esencial (USD 150/mes) para nuestro medio.\n\nNombre del medio: \nSitio actual: \nFecha estimada para migrar: \n'
+);
+
+const medioMailto = buildMailto(
+  'Quiero el plan Medio para mi medio',
+  'Hola Fabián,\n\nNos interesa el plan Medio (USD 300/mes) para nuestro medio.\n\nNombre del medio: \nSitio actual: \n¿Tienen newsletter o suscriptores hoy?: \n'
+);
+
+const auditMailto = buildMailto(
+  'Solicitud de auditoría gratuita para mi medio',
+  'Hola Fabián,\n\nQuisiera pedir la auditoría gratuita de 3 puntos para mi medio.\n\nNombre o medio: \nURL actual del sitio: \n'
+);
+
+const projects = [
+  {
+    slug: 'zun',
+    name: 'Revista ZUN',
+    kind: 'Revista digital',
+    url: 'https://revistazun.com',
+    domain: 'revistazun.com',
+    text: 'Sitio editorial con CMS a la medida de la redacción, newsletter y donaciones en cada artículo.',
+  },
+  {
+    slug: 'ayr',
+    name: 'Arriaza & Ramírez Asociados',
+    kind: 'Estudio jurídico',
+    url: 'https://ayrlegal.cl',
+    domain: 'ayrlegal.cl',
+    text: 'Sitio para un estudio de derecho laboral, civil y de familia, pensado para agendar consultas.',
+  },
+  {
+    slug: 'psandrei',
+    name: 'Ps. Andrei Andrusco',
+    kind: 'Consulta de psicología',
+    url: 'https://psandrei.com',
+    domain: 'psandrei.com',
+    text: 'Sitio de consulta clínica con artículos de psicoeducación y agenda de horas.',
+  },
+];
+
+const plans = [
+  {
+    name: 'Esencial',
+    price: 'USD 150',
+    audience: 'Revistas y medios pequeños',
+    href: esencialMailto,
+    features: [
+      'Sitio rápido en Astro con tu identidad',
+      'CMS Strapi pensado para tu redacción',
+      'Hosting, dominio y respaldos',
+      '2 horas de cambios al mes',
+    ],
+    featured: false,
+  },
+  {
+    name: 'Medio',
+    price: 'USD 300',
+    audience: 'Medios con suscriptores o anunciantes',
+    href: medioMailto,
+    features: [
+      'Todo lo del plan Esencial',
+      'Newsletter integrada al sitio',
+      'Membresías y donaciones',
+      '6 horas de cambios al mes',
+    ],
+    featured: true,
+  },
+];
+
+const steps = [
+  { title: 'Conversamos 20 minutos', text: 'Me cuentas cómo trabaja tu redacción y qué te frena hoy.' },
+  { title: 'Migramos tu contenido', text: 'Traemos tus notas, autores e imágenes desde WordPress u otra plataforma.' },
+  { title: 'Tu equipo publica', text: 'Una hora de capacitación y tu redacción queda publicando sola.' },
+  { title: 'Yo me encargo del resto', text: 'Hosting, actualizaciones, seguridad y cambios mes a mes.' },
+];
+
+const faqs = [
+  {
+    question: '¿De quién es el sitio, el dominio y el contenido si un día dejo el servicio?',
+    answer:
+      'El 100% del medio es tuyo. El dominio, la base de datos de artículos, los archivos multimedia y las cuentas de hosting están a tu nombre desde el primer día. No existe retención técnica ni cláusulas de amarre: si decides no continuar, te entregamos el repositorio completo y los respaldos para que puedas llevarte tu sitio a donde quieras.',
+  },
+  {
+    question: '¿Perderemos posicionamiento en Google (SEO) al salir de WordPress?',
+    answer:
+      'No. El proceso de migración incluye un mapa completo de redirecciones permanentes (301) para que cada enlace antiguo lleve a la nueva URL sin romper enlaces compartidos ni tráfico de Google. Además, migramos cada artículo con su fecha original, metadatos y autores, y al cargar en menos de un segundo, las métricas Core Web Vitals suelen mejorar de inmediato.',
+  },
+  {
+    question: '¿Cuánto demora estar al aire con el sitio nuevo?',
+    answer:
+      'Entre 3 y 4 semanas desde que acordamos el diseño hasta el lanzamiento público. En la semana 1 definimos identidad y estructura; en la semana 2 configuramos el CMS y migramos la base de datos de notas; en la semana 3 capacitamos a tu equipo y realizamos pruebas; y en la semana 4 apuntamos el dominio y salimos al aire sin interrupciones.',
+  },
+  {
+    question: '¿Qué pasa si una nota se vuelve viral y tenemos un pico de tráfico?',
+    answer:
+      'El sitio no se caerá. A diferencia de WordPress, que procesa cada visita consultando una base de datos pesada y colapsa cuando llegan miles de lectores simultáneos, el sitio se compila de forma estática y se distribuye a través de la red global de Cloudflare sin cobros extra por tráfico.',
+  },
+  {
+    question: '¿En qué se pueden usar las horas de cambios mensuales?',
+    answer:
+      'En lo que tu medio necesite en cada momento: diseñar una portada especial para elecciones o coberturas de investigación, crear plantillas para convocatorias o premios, ajustar la tipografía, integrar nuevas herramientas de analítica o newsletter, o pedir apoyo técnico para un redactor nuevo.',
+  },
+];
+---
+
+<Base
+  title="Sitios y CMS para medios independientes — Fabián Jeldes"
+  description="Sitio rápido en Astro, CMS Strapi a la medida de tu redacción y soporte técnico por una cuota mensual fija."
+  siteName="Fabián Jeldes — Sitios y CMS para medios"
+>
+  <!-- Barra de navegación superior minimalista -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="/" class="topbar-brand">
+        <span class="topbar-dot" aria-hidden="true"></span>
+        <span class="topbar-name">Fabián Jeldes</span>
+        <span class="topbar-role">/ Oferta para medios</span>
+      </a>
+      <nav class="topbar-nav" aria-label="Navegación principal">
+        <a href="/" class="pill topbar-pill">← Perfil</a>
+        <a href="#trabajos" class="pill topbar-pill">Trabajos</a>
+        <a href="#caso-zun" class="pill topbar-pill">Caso ZUN</a>
+        <a href="#planes" class="pill topbar-pill">Planes</a>
+        <a href="#preguntas" class="pill topbar-pill">Preguntas</a>
+        <a href="#auditoria" class="pill topbar-pill pill--filled">Auditoría</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero con captura de escritorio y celular flotante -->
+  <section class="hero wrap">
+    <div class="hero-text">
+      <p class="label reveal">* Para revistas, medios regionales y newsletters</p>
+      <h1 class="reveal" style="--delay: 80ms">Tu medio, con un sitio rápido y un CMS que tu redacción entiende</h1>
+      <p class="lead reveal" style="--delay: 160ms">
+        Diseño, CMS, hosting y soporte por una cuota mensual fija. Tú te ocupas del periodismo; yo, de que el sitio
+        funcione.
+      </p>
+      <div class="hero-actions reveal" style="--delay: 240ms">
+        <a class="cta" href={heroMailto}>Agenda una conversación</a>
+        <a class="pill" href="#trabajos">Ver trabajos</a>
+        <button
+          type="button"
+          class="pill copy-email-btn"
+          data-copy-email={contactEmail}
+          aria-label="Copiar correo de contacto directo"
+        >
+          <span class="copy-text">Copiar correo</span>
+          <span class="copy-feedback" aria-live="polite">¡Correo copiado!</span>
+        </button>
+        {
+          calendlyUrl && (
+            <a class="pill" href={calendlyUrl} target="_blank" rel="noopener noreferrer">
+              Ver calendario ↗
+            </a>
+          )
+        }
+        {
+          whatsappNumber && (
+            <a
+              class="pill"
+              href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hola Fabián, me gustaría conversar sobre el sitio de mi medio.')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              WhatsApp ↗
+            </a>
+          )
+        }
+      </div>
+    </div>
+
+    <div class="hero-showcase reveal" style="--delay: 200ms">
+      <BrowserFrame src="/media/trabajos/zun-desktop.jpg" alt="Portada de Revista ZUN" domain="revistazun.com" eager />
+      <div class="hero-phone">
+        <PhoneFrame src="/media/trabajos/zun-mobile.jpg" alt="Revista ZUN en el celular" eager />
+      </div>
+    </div>
+  </section>
+
+  <!-- Marquesina continua de Revista ZUN -->
+  <Ticker
+    items={['Sitios rápidos', 'CMS Strapi a la medida', 'Hosting incluido', 'Newsletter y donaciones', 'Soporte mensual']}
+  />
+
+  <main>
+    <!-- El Problema -->
+    <section class="wrap problem">
+      <p class="label reveal">* El problema</p>
+      <h2 class="reveal">¿Te suena familiar?</h2>
+      <ul class="rule-list hover-list reveal">
+        <li>WordPress lleno de plugins que nadie se atreve a actualizar.</li>
+        <li>Un sitio lento que espanta lectores desde el celular.</li>
+        <li>Cada cambio de diseño depende de un técnico que no siempre responde.</li>
+        <li>Newsletter, donaciones y sitio viviendo en herramientas separadas.</li>
+      </ul>
+    </section>
+
+    <!-- Trabajos con capturas Desktop + Mobile superpuestas -->
+    <section class="wrap" id="trabajos">
+      <p class="label reveal">* Trabajos</p>
+      <h2 class="reveal">Sitios que ya están funcionando</h2>
+      <div class="projects">
+        {
+          projects.map((project, i) => (
+            <div class="reveal" style={`--delay: ${i * 100}ms`}>
+              <a class="project" href={project.url} target="_blank" rel="noopener noreferrer">
+                <div class="project-media">
+                  <BrowserFrame
+                    src={`/media/trabajos/${project.slug}-desktop.jpg`}
+                    alt={`Sitio de ${project.name}`}
+                    domain={project.domain}
+                  />
+                  <div class="project-phone">
+                    <PhoneFrame src={`/media/trabajos/${project.slug}-mobile.jpg`} alt={`${project.name} en el celular`} />
+                  </div>
+                </div>
+                <p class="project-meta">
+                  {project.kind} / {project.domain}
+                </p>
+                <h3>{project.name}</h3>
+                <p class="project-text">{project.text}</p>
+              </a>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Caso Real: Revista ZUN -->
+    <section id="caso-zun" class="case">
+      <div class="wrap">
+        <p class="label reveal">* Caso real / Revista ZUN</p>
+        <img class="wordmark reveal" src="/zun-wordmark.svg" alt="Revista ZUN" width="1392" height="199" />
+        <h2 class="reveal">De WordPress a un sitio hecho a su medida</h2>
+        <p class="case-note reveal">Esta página usa el mismo sistema de diseño que construimos para la revista.</p>
+        <div class="case-grid">
+          <div class="reveal">
+            <h3>El punto de partida</h3>
+            <p>
+              Una revista digital en WordPress que necesitaba más control sobre su diseño y una forma más simple de
+              publicar.
+            </p>
+          </div>
+          <div class="reveal" style="--delay: 100ms">
+            <h3>Lo que construimos</h3>
+            <ul class="rule-list hover-list">
+              <li>Sitio nuevo en Astro, servido desde Cloudflare.</li>
+              <li>CMS Strapi con formularios ordenados como trabaja la redacción.</li>
+              <li>Migración completa de las notas existentes.</li>
+              <li>Newsletter y donaciones en cada artículo.</li>
+              <li>Portada y convocatorias editables desde el CMS, sin tocar código.</li>
+            </ul>
+          </div>
+        </div>
+
+        <blockquote class="case-quote reveal">
+          <p>
+            "Pasamos de tener miedo a tocar WordPress por si algo se rompía, a tener una redacción que publica notas
+            completas con fotos y newsletter en minutos. El sitio vuela desde el teléfono y la identidad visual se siente
+            por fin como una revista de verdad."
+          </p>
+          <cite>— Equipo editorial de Revista ZUN</cite>
+        </blockquote>
+
+        <div class="case-actions reveal">
+          <a class="pill" href="https://revistazun.com" target="_blank" rel="noopener noreferrer">
+            Visita revistazun.com ↗
+          </a>
+          <a class="pill pill--filled" href="#auditoria">
+            Pide una auditoría para tu medio
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Planes -->
+    <section id="planes" class="wrap">
+      <p class="label reveal">* Planes</p>
+      <h2 class="reveal">Una cuota fija al mes</h2>
+      <p class="muted reveal">
+        Pago inicial de USD 400 por diseño, migración y capacitación. Sin contratos de permanencia.
+      </p>
+      <div class="plans">
+        {
+          plans.map((plan, i) => (
+            <div class="reveal" style={`--delay: ${i * 100}ms`}>
+              <article class:list={['plan', { featured: plan.featured }]}>
+                <div class="plan-head">
+                  <p class="label">{plan.name}</p>
+                  {plan.featured && <span class="badge-featured">MÁS ELEGIDO</span>}
+                </div>
+                <p class="price">
+                  {plan.price}
+                  <span>/mes</span>
+                </p>
+                <p class="muted">{plan.audience}</p>
+                <ul class="rule-list">
+                  {plan.features.map((feature) => (
+                    <li>{feature}</li>
+                  ))}
+                </ul>
+                <a class:list={[plan.featured ? 'cta' : 'pill']} href={plan.href}>
+                  Quiero el plan {plan.name}
+                </a>
+              </article>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Detalle de horas mensuales -->
+      <div class="plans-hours-box reveal">
+        <p class="label">* ¿En qué se usan las horas mensuales de soporte?</p>
+        <p class="plans-hours-lead">
+          Cada mes tienes horas dedicadas para que el sitio evolucione al ritmo de tu cobertura periodística:
+        </p>
+        <ul class="rule-list hover-list">
+          <li>
+            <strong>Nuevas secciones y especiales:</strong> Maquetación de portadas temáticas para elecciones, reportajes
+            de investigación o aniversarios.
+          </li>
+          <li>
+            <strong>Ajustes de portada y diseño:</strong> Modificaciones a la disposición de notas, nuevos llamados de
+            lectura o retoques de identidad.
+          </li>
+          <li>
+            <strong>Campañas de monetización:</strong> Inserción de bloques para captar socios, colectas anuales o nuevos
+            espacios para auspicios.
+          </li>
+          <li>
+            <strong>Apoyo a redactores:</strong> Capacitación para nuevos miembros del equipo, resolución de dudas y
+            monitoreo de métricas.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Cómo funciona -->
+    <section class="wrap">
+      <p class="label reveal">* Cómo funciona</p>
+      <h2 class="reveal">Cuatro pasos</h2>
+      <ol class="steps">
+        {
+          steps.map((step, i) => (
+            <li class="reveal" style={`--delay: ${i * 80}ms`}>
+              <p class="label">0{i + 1}</p>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <!-- Preguntas Frecuentes -->
+    <section id="preguntas" class="wrap">
+      <p class="label reveal">* Preguntas frecuentes</p>
+      <h2 class="reveal">Lo que suelen preguntar antes de migrar</h2>
+      <div class="faq-list reveal">
+        {
+          faqs.map((faq, index) => (
+            <details class="faq-item" open={index === 0}>
+              <summary class="faq-summary">
+                <span class="faq-title">{faq.question}</span>
+                <span class="faq-toggle" aria-hidden="true">+</span>
+              </summary>
+              <div class="faq-body">
+                <p>{faq.answer}</p>
+              </div>
+            </details>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Cierre e interactividad de Auditoría -->
+    <section id="auditoria" class="closing">
+      <div class="wrap">
+        <p class="label closing-label reveal">* Auditoría gratuita</p>
+        <h2 class="reveal">¿Revisamos tu sitio?</h2>
+        <p class="closing-lead reveal">
+          Te envío una auditoría con tres mejoras concretas para tu sitio actual, la contrates o no.
+        </p>
+
+        <form id="audit-form" class="audit-form reveal" novalidate data-contact-email={contactEmail}>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="audit-name" class="form-label">Nombre o medio</label>
+              <input
+                type="text"
+                id="audit-name"
+                name="name"
+                class="form-input"
+                placeholder="Ej: El Faro Regional / Camila Rojas"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="audit-url" class="form-label">URL actual del sitio</label>
+              <input
+                type="url"
+                id="audit-url"
+                name="url"
+                class="form-input"
+                placeholder="https://tumedio.cl"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="audit-email" class="form-label">Tu correo de respuesta</label>
+              <input
+                type="email"
+                id="audit-email"
+                name="email"
+                class="form-input"
+                placeholder="redaccion@tumedio.cl"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="cta audit-submit-btn">
+              Pide tu auditoría
+            </button>
+            <button
+              type="button"
+              class="pill pill--light copy-email-btn"
+              data-copy-email={contactEmail}
+              aria-label="Copiar correo de contacto directo"
+            >
+              <span class="copy-text">Copiar correo ({contactEmail})</span>
+              <span class="copy-feedback" aria-live="polite">¡Correo copiado!</span>
+            </button>
+          </div>
+
+          <div id="audit-feedback" class="audit-feedback" hidden>
+            <div class="feedback-header">
+              <span class="feedback-badge">SOLICITUD LISTA</span>
+              <p class="feedback-title">Abrimos tu cliente de correo para enviarla</p>
+            </div>
+            <p class="feedback-desc">
+              Si no se abrió automáticamente tu cliente de correo, puedes copiar el mensaje ya redactado y enviarlo a{' '}
+              <strong>{contactEmail}</strong>:
+            </p>
+            <div class="feedback-box">
+              <pre id="feedback-preview" class="feedback-preview"></pre>
+              <div class="feedback-box-actions">
+                <button type="button" id="copy-audit-msg-btn" class="pill pill--light copy-email-btn">
+                  <span class="copy-text">Copiar mensaje listo</span>
+                  <span class="copy-feedback" aria-live="polite">¡Mensaje copiado!</span>
+                </button>
+                <a id="feedback-mailto-link" class="pill pill--light" href={auditMailto}>
+                  Abrir correo manual ↗
+                </a>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-top wrap">
+      <nav class="footer-links" aria-label="Enlaces de pie de página">
+        <a href="/">Perfil completo</a>
+        <a href={heroMailto}>Escríbeme</a>
+        <button
+          type="button"
+          class="footer-copy-btn copy-email-btn"
+          data-copy-email={contactEmail}
+          aria-label="Copiar correo de contacto"
+        >
+          <span class="copy-text">Copiar correo</span>
+          <span class="copy-feedback" aria-live="polite">¡Copiado!</span>
+        </button>
+        <a href="#trabajos">Trabajos</a>
+        <a href="#planes">Planes</a>
+        <a href="#preguntas">Preguntas</a>
+        <a href="https://revistazun.com" target="_blank" rel="noopener noreferrer">Revista ZUN</a>
+      </nav>
+      <p class="footer-credit">Fabián Jeldes / Desarrollo web para medios</p>
+    </div>
+    <div class="footer-wordmark-wrap" aria-hidden="true">
+      <p class="footer-wordmark">Fabián Jeldes</p>
+    </div>
+  </footer>
+
+  <!-- Scripts cliente ligeros: Copiar correo & Manejo del formulario de auditoría -->
+  <script is:inline>
+    document.querySelectorAll('[data-copy-email]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const email = button.getAttribute('data-copy-email');
+        if (!email) return;
+
+        try {
+          await navigator.clipboard.writeText(email);
+          button.classList.add('copied');
+          setTimeout(() => {
+            button.classList.remove('copied');
+          }, 2500);
+        } catch (err) {
+          const input = document.createElement('input');
+          input.value = email;
+          document.body.appendChild(input);
+          input.select();
+          document.execCommand('copy');
+          document.body.removeChild(input);
+          button.classList.add('copied');
+          setTimeout(() => {
+            button.classList.remove('copied');
+          }, 2500);
+        }
+      });
+    });
+
+    const auditForm = document.getElementById('audit-form');
+    const auditFeedback = document.getElementById('audit-feedback');
+    const feedbackPreview = document.getElementById('feedback-preview');
+    const feedbackMailtoLink = document.getElementById('feedback-mailto-link');
+    const copyAuditMsgBtn = document.getElementById('copy-audit-msg-btn');
+
+    if (auditForm) {
+      const contactEmail = auditForm.getAttribute('data-contact-email') || '';
+
+      auditForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const nameInput = document.getElementById('audit-name');
+        const urlInput = document.getElementById('audit-url');
+        const emailInput = document.getElementById('audit-email');
+
+        const name = (nameInput?.value || '').trim();
+        const url = (urlInput?.value || '').trim();
+        const email = (emailInput?.value || '').trim();
+
+        if (!name || !url || !email) {
+          if (!name && nameInput) nameInput.focus();
+          else if (!url && urlInput) urlInput.focus();
+          else if (!email && emailInput) emailInput.focus();
+          return;
+        }
+
+        const subject = `Solicitud de auditoría gratuita: ${name}`;
+        const body = `Hola Fabián,
+
+Quisiera solicitar la auditoría gratuita de 3 puntos para nuestro medio.
+
+* Medio o responsable: ${name}
+* URL actual del sitio: ${url}
+* Correo de respuesta: ${email}
+
+Quedo atento a tus observaciones.
+
+Saludos,
+${name}`;
+
+        const mailtoUrl = `mailto:${contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+        if (feedbackPreview) feedbackPreview.textContent = body;
+        if (feedbackMailtoLink) feedbackMailtoLink.href = mailtoUrl;
+        if (auditFeedback) {
+          auditFeedback.hidden = false;
+          auditFeedback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        window.location.href = mailtoUrl;
+      });
+
+      if (copyAuditMsgBtn && feedbackPreview) {
+        copyAuditMsgBtn.addEventListener('click', async () => {
+          const text = feedbackPreview.textContent || '';
+          try {
+            await navigator.clipboard.writeText(text);
+            copyAuditMsgBtn.classList.add('copied');
+            setTimeout(() => {
+              copyAuditMsgBtn.classList.remove('copied');
+            }, 2500);
+          } catch (e) {
+            // Ignorar error si no hay permisos
+          }
+        });
+      }
+    }
+  </script>
+</Base>
+
+<style>
+  .wrap {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding-inline: var(--container-pad);
+  }
+
+  section {
+    padding-block: var(--gap-l);
+  }
+
+  .muted {
+    color: var(--gris);
+  }
+
+  /* ---- Topbar ---- */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .topbar-inner {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 12px var(--container-pad);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gap-s);
+  }
+
+  .topbar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--negro);
+    font-weight: 500;
+  }
+
+  .topbar-brand:hover .topbar-name {
+    color: var(--rojo);
+  }
+
+  .topbar-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--rojo);
+    display: inline-block;
+  }
+
+  .topbar-role {
+    color: var(--gris);
+    font-weight: 400;
+  }
+
+  .topbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .topbar-pill {
+    height: 36px;
+    padding: 0 16px;
+    font-size: 12px;
+  }
+
+  /* ---- Hero ---- */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1.05fr;
+    align-items: center;
+    gap: var(--gap-l);
+    padding-block: var(--gap-l);
+  }
+
+  .hero h1 {
+    margin-bottom: var(--gap-m);
+  }
+
+  .lead {
+    color: var(--gris);
+    max-width: 44ch;
+    margin-bottom: var(--gap-m);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .hero-showcase {
+    position: relative;
+    padding-bottom: var(--gap-m);
+    padding-right: var(--gap-m);
+  }
+
+  .hero-phone {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 26%;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  /* Utilidad de botón de copiado */
+  .copy-email-btn {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .copy-email-btn .copy-feedback {
+    display: none;
+    color: inherit;
+    font-weight: 500;
+  }
+
+  .copy-email-btn.copied .copy-text {
+    display: none;
+  }
+
+  .copy-email-btn.copied .copy-feedback {
+    display: inline;
+  }
+
+  .pill.copy-email-btn.copied {
+    background-color: var(--negro);
+    border-color: var(--negro);
+    color: #ffffff;
+  }
+
+  .pill--light.copy-email-btn.copied {
+    background-color: #ffffff;
+    border-color: #ffffff;
+    color: var(--negro);
+  }
+
+  .footer-copy-btn.copied .copy-feedback {
+    color: var(--rojo);
+  }
+
+  /* ---- Problem list: ZUN red bar on hover ---- */
+  .hover-list li {
+    position: relative;
+    padding-left: 0;
+    transition: padding-left 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .hover-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 3px;
+    background-color: var(--rojo);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+  }
+
+  .hover-list li:hover {
+    padding-left: 16px;
+  }
+
+  .hover-list li:hover::before {
+    transform: scaleY(1);
+  }
+
+  .rule-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--gap-m);
+    max-width: 60ch;
+  }
+
+  .rule-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* ---- Projects: ZUN image card (Desktop + Mobile frames) ---- */
+  .projects {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--gap-m);
+    margin-top: var(--gap-m);
+  }
+
+  .project {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .project:hover {
+    transform: translateY(-4px);
+  }
+
+  .project-media {
+    position: relative;
+    padding: 0 var(--gap-s) var(--gap-s) 0;
+    margin-bottom: 8px;
+  }
+
+  .project-phone {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 28%;
+    transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .project:hover .project-phone {
+    transform: translateY(-8px) rotate(2deg);
+  }
+
+  .project-meta {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--negro);
+    opacity: 0.6;
+  }
+
+  .project h3 {
+    margin: 0;
+    transition: color 0.25s ease;
+  }
+
+  .project:hover h3 {
+    color: var(--rojo);
+  }
+
+  .project-text {
+    margin: 0;
+    color: var(--gris);
+  }
+
+  /* ---- Case ---- */
+  .case {
+    background-color: var(--celeste);
+  }
+
+  .wordmark {
+    display: block;
+    width: min(320px, 70%);
+    height: auto;
+    margin-bottom: var(--gap-m);
+  }
+
+  .case-note {
+    color: var(--gris);
+    max-width: 54ch;
+  }
+
+  .case-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: var(--gap-m);
+    margin-block: var(--gap-m);
+  }
+
+  .case-quote {
+    margin: var(--gap-m) 0;
+    padding: var(--gap-s) 0 var(--gap-s) var(--gap-m);
+    border-left: 3px solid var(--rojo);
+    max-width: 68ch;
+  }
+
+  .case-quote p {
+    font-size: 1.25rem;
+    line-height: 1.45;
+    font-weight: 500;
+    color: var(--negro);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--gap-s);
+  }
+
+  .case-quote cite {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-style: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gris);
+  }
+
+  .case-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  /* ---- Plans: ZUN text card ---- */
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--gap-m);
+    margin-top: var(--gap-m);
+  }
+
+  .plan {
+    height: 100%;
+    border: 0.5px solid var(--borde-card);
+    border-radius: 8px;
+    padding: var(--gap-m);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: var(--bg);
+    transition:
+      border-color 0.25s ease,
+      box-shadow 0.25s ease,
+      transform 0.25s ease;
+  }
+
+  .plan:hover {
+    border-color: var(--rojo);
+    box-shadow: 0 10px 26px -12px rgba(0, 0, 0, 0.18);
+    transform: translateY(-2px);
+  }
+
+  .plan.featured {
+    border: 1px solid var(--text);
+  }
+
+  .plan.featured:hover {
+    border-color: var(--rojo);
+  }
+
+  .plan-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .badge-featured {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    background-color: var(--negro);
+    color: var(--bg);
+    padding: 4px 10px;
+    border-radius: 100px;
+    margin-bottom: var(--gap-s);
+  }
+
+  .plan .rule-list {
+    flex: 1;
+    width: 100%;
+  }
+
+  .price {
+    font-size: 3rem;
+    font-weight: 600;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    margin-bottom: var(--gap-s);
+  }
+
+  .price span {
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--gris);
+  }
+
+  .plans-hours-box {
+    margin-top: var(--gap-m);
+    padding: var(--gap-m);
+    border: 0.5px solid var(--borde-card);
+    border-radius: 8px;
+    background-color: var(--blanco-cielo);
+  }
+
+  .plans-hours-lead {
+    margin-bottom: var(--gap-s);
+  }
+
+  .plans-hours-box .rule-list {
+    margin-bottom: 0;
+  }
+
+  /* ---- Steps ---- */
+  .steps {
+    list-style: none;
+    padding: 0;
+    margin: var(--gap-m) 0 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--gap-m);
+  }
+
+  .steps li {
+    position: relative;
+    border-top: 1px solid var(--text);
+    padding-top: var(--gap-s);
+  }
+
+  .steps li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: -1px;
+    width: 100%;
+    height: 1px;
+    background-color: var(--rojo);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .steps li:hover::before {
+    transform: scaleX(1);
+  }
+
+  .steps p:last-child {
+    color: var(--gris);
+    margin: 0;
+  }
+
+  /* ---- FAQ ---- */
+  .faq-list {
+    margin-top: var(--gap-m);
+    max-width: 72ch;
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--line);
+    padding: 16px 0;
+  }
+
+  .faq-item:first-child {
+    border-top: 1px solid var(--line);
+  }
+
+  .faq-summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--gap-s);
+  }
+
+  .faq-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    color: var(--negro);
+    line-height: 1.35;
+    transition: color 0.2s ease;
+  }
+
+  .faq-summary:hover .faq-title {
+    color: var(--rojo);
+  }
+
+  .faq-toggle {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    color: var(--gris);
+    font-weight: 400;
+    line-height: 1;
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+
+  details[open] .faq-toggle {
+    transform: rotate(45deg);
+    color: var(--rojo);
+  }
+
+  .faq-body {
+    padding-top: 12px;
+    padding-bottom: 4px;
+    color: var(--text);
+  }
+
+  .faq-body p {
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* ---- Closing band ---- */
+  .closing {
+    background-color: var(--negro);
+  }
+
+  .closing h2,
+  .closing p {
+    color: #ffffff;
+  }
+
+  .closing-label {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  .closing-lead {
+    max-width: 48ch;
+    margin-bottom: var(--gap-m);
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .audit-form {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: var(--gap-m);
+    margin-top: var(--gap-m);
+    max-width: 860px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: var(--gap-m);
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 18px 20px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background-color: transparent;
+    color: #ffffff;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    transition: border-color 0.2s ease;
+  }
+
+  .form-input::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+
+  .form-input:focus {
+    border-color: var(--rojo);
+    outline: none;
+  }
+
+  .form-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .audit-feedback {
+    margin-top: var(--gap-m);
+    padding: var(--gap-m);
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
+  }
+
+  .feedback-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .feedback-badge {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    background-color: var(--rojo);
+    color: #ffffff;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  .feedback-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  .feedback-desc {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.8) !important;
+    margin-bottom: 12px;
+  }
+
+  .feedback-box {
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    padding: 16px;
+  }
+
+  .feedback-preview {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.5;
+    color: #ffffff;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0 0 14px;
+    max-height: 180px;
+    overflow-y: auto;
+  }
+
+  .feedback-box-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* ---- Footer ---- */
+  .footer {
+    background-color: var(--bg);
+    color: var(--negro);
+    padding-top: var(--gap-m);
+  }
+
+  .footer-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+    padding-bottom: var(--gap-m);
+  }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .footer-links a,
+  .footer-copy-btn,
+  .footer-credit {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    color: var(--negro);
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-copy-btn {
+    cursor: pointer;
+  }
+
+  .footer-links a:hover,
+  .footer-copy-btn:hover {
+    color: var(--rojo);
+  }
+
+  .footer-credit {
+    color: var(--gris);
+  }
+
+  .footer-wordmark-wrap {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--container-pad);
+    container-type: inline-size;
+    overflow: hidden;
+    max-height: 11cqw;
+  }
+
+  .footer-wordmark {
+    margin: 0 0 -0.12em -0.055em;
+    text-align: left;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 15.2cqw;
+    white-space: nowrap;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--negro);
+  }
+
+  @media (min-width: 1024px) {
+    .footer-top {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: baseline;
+      text-align: left;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .projects {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .topbar-role {
+      display: none;
+    }
+
+    .topbar-pill {
+      height: 32px;
+      padding: 0 10px;
+      font-size: 12px;
+    }
+
+    .hero,
+    .case-grid,
+    .plans,
+    .steps,
+    .projects {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-phone {
+      animation: none;
+    }
+
+    .project,
+    .project-phone,
+    .plan,
+    .hover-list li,
+    .steps li::before {
+      transition: none;
+    }
+  }
+</style>

@@ -5,195 +5,399 @@ import PhoneFrame from '../components/PhoneFrame.astro';
 import Ticker from '../components/Ticker.astro';
 
 // El correo es público: aparece en cada enlace de contacto de la página.
-const contactEmail = 'fabian.jeldes@gmail.com';
+const contactEmail = import.meta.env.CONTACT_EMAIL || 'fabian.jeldes@gmail.com';
+const calendlyUrl = import.meta.env.PUBLIC_CALENDLY_URL;
+const whatsappNumber = import.meta.env.PUBLIC_WHATSAPP_NUMBER;
 
-const contactHref = `mailto:${contactEmail}?subject=${encodeURIComponent('Quiero conversar sobre el sitio de mi medio')}`;
+const buildMailto = (subject: string, body?: string) => {
+  const params = new URLSearchParams();
+  params.set('subject', subject);
+  if (body) params.set('body', body);
+  return `mailto:${contactEmail}?${params.toString().replace(/\+/g, '%20')}`;
+};
 
-const projects = [
+const directMailto = buildMailto(
+  'Hola Fabián — conversemos',
+  'Hola Fabián,\n\nTe escribo porque me gustaría conversar sobre:\n\nNombre o empresa: \nContexto breve: \n'
+);
+
+const pillars = [
+  {
+    num: '01',
+    title: 'Desarrollo web y plataformas',
+    summary:
+      'Diseño y construyo sitios rápidos, migraciones desde WordPress y aplicaciones web con arquitectura mantenible, foco en rendimiento y SEO técnico.',
+    evidence: [
+      'Migración editorial de Revista ZUN a Astro + Strapi en Cloudflare.',
+      'Sitios en producción orientados a conversión para servicios profesionales.',
+      'Interfaces modulares con Vue 3 (Composition API), Astro y APIs REST.',
+    ],
+    stack: ['Astro', 'Vue 3', 'JavaScript ES6+', 'Tailwind CSS', 'Strapi', 'Supabase', 'PostgreSQL', 'Cloudflare'],
+  },
+  {
+    num: '02',
+    title: 'Datos, automatización e IA',
+    summary:
+      'Ordeno y depuro bases de datos de gran volumen, automatizo flujos de limpieza para reportes ejecutivos y audito código y respuestas de modelos de lenguaje.',
+    evidence: [
+      'Consolidación y automatización en Excel y Python para auditoría de RR.HH. en ENGIE Chile.',
+      'Curación de datasets bilingües y QA técnico de código para LLMs en Outlier Latam.',
+      'Certificación Google en Analítica de Datos Avanzada y Análisis de Datos.',
+    ],
+    stack: ['Python', 'pandas', 'NumPy', 'scikit-learn', 'SQL', 'R', 'Excel avanzado', 'QA de LLMs'],
+  },
+  {
+    num: '03',
+    title: 'Infraestructura, seguridad y gestión',
+    summary:
+      'Acompaño proyectos de punta a punta: control de accesos, despliegue confiable, soporte técnico y traducción clara entre negocio y tecnología en español o inglés.',
+    evidence: [
+      'Diseño con control de roles (RBAC/RLS), buenas prácticas OWASP y Google Cybersecurity.',
+      'Soporte TI independiente (Linux/Windows, diagnóstico y optimización) desde 2019.',
+      'Gestión ágil (Scrum/Kanban) y producción bilingüe para marcas corporativas.',
+    ],
+    stack: ['RBAC / RLS', 'OWASP', 'Linux', 'Git / GitHub', 'Scrum', 'Kanban', 'Inglés C1–C2'],
+  },
+];
+
+const webProjects = [
   {
     slug: 'zun',
+    code: '01',
+    shortLabel: 'Revista ZUN',
+    category: 'web',
     name: 'Revista ZUN',
-    kind: 'Revista digital',
+    kind: 'Plataforma editorial',
     url: 'https://revistazun.com',
     domain: 'revistazun.com',
-    text: 'Sitio editorial con CMS a la medida de la redacción, newsletter y donaciones en cada artículo.',
+    stack: 'Astro · Strapi · Cloudflare',
+    text: 'Migración desde WordPress a un sitio rápido en Astro con CMS Strapi a la medida de la redacción, newsletter y donaciones.',
   },
   {
     slug: 'ayr',
+    code: '02',
+    shortLabel: 'A&R Legal',
+    category: 'web',
     name: 'Arriaza & Ramírez Asociados',
     kind: 'Estudio jurídico',
     url: 'https://ayrlegal.cl',
     domain: 'ayrlegal.cl',
-    text: 'Sitio para un estudio de derecho laboral, civil y de familia, pensado para agendar consultas.',
+    stack: 'Web institucional · SEO · Conversión',
+    text: 'Sitio rápido y claro para un estudio de derecho laboral, civil y de familia, estructurado para facilitar el agendamiento.',
   },
   {
     slug: 'psandrei',
+    code: '03',
+    shortLabel: 'Ps. Andrei',
+    category: 'web',
     name: 'Ps. Andrei Andrusco',
-    kind: 'Consulta de psicología',
+    kind: 'Consulta clínica',
     url: 'https://psandrei.com',
     domain: 'psandrei.com',
-    text: 'Sitio de consulta clínica con artículos de psicoeducación y agenda de horas.',
+    stack: 'Web profesional · Contenido · Agenda',
+    text: 'Plataforma de consulta psicológica con artículos de psicoeducación, lectura cómoda en móvil y reserva de horas.',
   },
 ];
 
-const plans = [
+const technicalProjects = [
   {
-    name: 'Esencial',
-    price: 'USD 150',
-    audience: 'Revistas y medios pequeños',
+    category: 'datos',
+    meta: 'Datos & Automatización / 2024–2025',
+    org: 'ENGIE Chile',
+    title: 'Auditoría de RR.HH. y limpieza automatizada de datos',
+    problem: 'Bases de datos de gran volumen con inconsistencias operativas y cruces manuales propensos a error.',
+    solution:
+      'Consolidé y depuré los registros críticos, automatizando flujos de limpieza en Excel y Python para habilitar reportes ejecutivos confiables.',
+    stack: 'Python · Excel avanzado · Limpieza ETL · Control de inconsistencias',
+  },
+  {
+    category: 'datos',
+    meta: 'Software & Producto / 2026',
+    org: 'Proyecto Integrado INACAP',
+    title: 'Sistema de gestión y distribución de agua purificada',
+    problem: 'Un negocio real de reparto necesitaba ordenar pedidos, rutas y operación sin sobredimensionar la inversión inicial.',
+    solution:
+      'Levanté requerimientos directo con el cliente y definimos en equipo un roadmap ejecutable en tres fases: MVP operativo, control logístico y autoservicio.',
+    stack: 'Modelado relacional · SQL · Levantamiento · Roadmap MVP · Scrum',
+  },
+  {
+    category: 'ia',
+    meta: 'IA & Calidad / 2019–Presente',
+    org: 'Outlier Latam',
+    title: 'Curación de datasets y auditoría técnica de LLMs (EN/ES)',
+    problem: 'Los modelos de lenguaje requieren evaluación rigurosa para evitar errores de lógica, código defectuoso o sesgos terminológicos.',
+    solution:
+      'Curo datos bilingües y audito código y respuestas generadas por IA bajo criterios estrictos de precisión técnica, consistencia y calidad lingüística.',
+    stack: 'LLMs · Auditoría de código · Lingüística computacional · Bilingüe EN/ES',
+  },
+];
+
+const experience = [
+  {
+    period: '2019 – Presente',
+    role: 'Curación de Datos y Lingüística Computacional',
+    org: 'Outlier Latam (freelance)',
+    detail: 'Entrenamiento y evaluación bilingüe (EN/ES) de LLMs, auditoría de código y control de calidad de respuestas.',
+  },
+  {
+    period: 'Sep 2024 – Feb 2025',
+    role: 'Asistente de Análisis de Datos — Auditoría de RR.HH.',
+    org: 'ENGIE Chile',
+    detail: 'Depuración de bases masivas, detección de inconsistencias operativas y automatización en Excel y Python.',
+  },
+  {
+    period: '2019 – Presente',
+    role: 'Técnico de Soporte e Infraestructura TI',
+    org: 'Consultoría independiente',
+    detail: 'Diagnóstico, mantenimiento preventivo, optimización y configuración de equipos y sistemas Linux/Windows.',
+  },
+  {
+    period: '2019',
+    role: 'Productor Operativo Bilingüe',
+    org: 'Nestlé · Metso Minería (Expomin)',
+    detail: 'Coordinación de montajes corporativos, proveedores técnicos y asistencia directa en inglés a directivos internacionales.',
+  },
+];
+
+const credentials = [
+  {
+    period: '2024 – 2026',
+    title: 'Analista Programador',
+    org: 'INACAP · Último semestre',
+    detail: 'Desarrollo full-stack, bases de datos relacionales, ingeniería de software y proyecto aplicado con cliente real.',
+  },
+  {
+    period: '2025 – 2026',
+    title: 'Certificados Profesionales de Google (2× Beca Talento Digital)',
+    org: 'Analítica Avanzada · Análisis de Datos · Gestión de Proyectos · Cybersecurity (en curso)',
+    detail: 'Python, pandas, scikit-learn, SQL, R, Scrum/Kanban, gestión de riesgos y fundamentos de seguridad.',
+  },
+  {
+    period: '2025',
+    title: 'Bootcamp de Programación Front-End',
+    org: 'Talento Digital',
+    detail: 'Desarrollo de interfaces modernas, JavaScript ES6+, Vue 3 y buenas prácticas de componentes.',
+  },
+  {
+    period: 'Idiomas y comunicación',
+    title: 'Inglés C1–C2 · Coaching Integrativo · Producción de Eventos',
+    org: 'CEFR (Chileno-Norteamericano) · Smart Coach · U. del Pacífico',
+    detail: 'Fluidez bilingüe escrita y hablada, facilitación con equipos no técnicos y levantamiento claro de requerimientos.',
+  },
+];
+
+const modes = [
+  {
+    num: '01',
+    name: 'Sitios web y CMS',
+    audience: 'Para medios, marcas y profesionales',
+    summary: 'Sitios rápidos en Astro o Vue 3, migraciones desde WordPress y paneles editoriales en Strapi fáciles de usar.',
     features: [
-      'Sitio rápido en Astro con tu identidad',
-      'CMS Strapi pensado para tu redacción',
-      'Hosting, dominio y respaldos',
-      '2 horas de cambios al mes',
+      'Diseño editorial limpio y rendimiento móvil',
+      'CMS a medida sin depender de plugins frágiles',
+      'Opción de cuota mensual fija para medios independientes',
     ],
     featured: false,
+    actionLabel: 'Ver planes para medios →',
+    actionHref: '/medios',
+    secondaryTopic: 'Sitio web / CMS',
   },
   {
-    name: 'Medio',
-    price: 'USD 300',
-    audience: 'Medios con suscriptores o anunciantes',
+    num: '02',
+    name: 'Datos, automatización y software',
+    audience: 'Para empresas, pymes y operaciones',
+    summary: 'Ordeno bases de datos, automatizo reportes repetitivos en Python/SQL y construyo herramientas web a la medida.',
     features: [
-      'Todo lo del plan Esencial',
-      'Newsletter integrada al sitio',
-      'Membresías y donaciones',
-      '6 horas de cambios al mes',
+      'Limpieza y consolidación de datos (Python, SQL, Excel)',
+      'Backends, APIs REST y modelado en PostgreSQL / Supabase',
+      'Levantamiento de requerimientos y entregas por etapas',
     ],
     featured: true,
+    actionLabel: 'Cotizar un proyecto',
+    actionHref: '#contacto',
+    topic: 'Datos / Automatización',
+  },
+  {
+    num: '03',
+    name: 'Equipos técnicos y roles TI',
+    audience: 'Analista Programador · Full-Stack · Datos',
+    summary: 'Disponible para integrarme a equipos de producto, ingeniería o analítica en modalidad remota o híbrida en Santiago.',
+    features: [
+      'Perfil híbrido: código limpio + criterio analítico',
+      'Trabajo fluido en español e inglés (CEFR C1–C2)',
+      'Documentación clara y trato directo con áreas de negocio',
+    ],
+    featured: false,
+    actionLabel: 'Conversemos sobre un rol',
+    actionHref: '#contacto',
+    topic: 'Oportunidad laboral',
   },
 ];
 
-const steps = [
-  { title: 'Conversamos 20 minutos', text: 'Me cuentas cómo trabaja tu redacción y qué te frena hoy.' },
-  { title: 'Migramos tu contenido', text: 'Traemos tus notas, autores e imágenes desde WordPress u otra plataforma.' },
-  { title: 'Tu equipo publica', text: 'Una hora de capacitación y tu redacción queda publicando sola.' },
-  { title: 'Yo me encargo del resto', text: 'Hosting, actualizaciones, seguridad y cambios mes a mes.' },
+const contactTopics = [
+  {
+    id: 'Sitio web / CMS',
+    placeholder: 'Ej: Queremos renovar nuestro sitio o migrar desde WordPress (https://...)',
+  },
+  {
+    id: 'Datos / Automatización',
+    placeholder: 'Ej: Necesitamos automatizar reportes en Python/Excel o depurar una base de datos',
+  },
+  {
+    id: 'Oportunidad laboral',
+    placeholder: 'Ej: Rol de Analista Programador / Data Analyst / Full-Stack (equipo y modalidad)',
+  },
+  {
+    id: 'Auditoría de sitio',
+    placeholder: 'Ej: URL del sitio que quieres revisar (https://...)',
+  },
 ];
 ---
 
 <Base
-  title="Sitios y CMS para medios independientes"
-  description="Sitio rápido, CMS a la medida de tu redacción y soporte técnico por una cuota mensual fija."
+  title="Fabián Jeldes — Desarrollo Web, Software y Análisis de Datos"
+  description="Analista Programador y Especialista en Datos. Sitios rápidos en Astro y Vue 3, CMS Strapi, automatización en Python/SQL y QA bilingüe de IA (EN/ES)."
 >
-  <header class="hero wrap">
-    <div class="hero-text">
-      <p class="label reveal">* Para revistas, medios regionales y newsletters</p>
-      <h1 class="reveal" style="--delay: 80ms">Tu medio, con un sitio rápido y un CMS que tu redacción entiende</h1>
-      <p class="lead reveal" style="--delay: 160ms">
-        Diseño, CMS, hosting y soporte por una cuota mensual fija. Tú te ocupas del periodismo; yo, de que el sitio
-        funcione.
-      </p>
-      <div class="hero-actions reveal" style="--delay: 240ms">
-        <a class="cta" href={contactHref}>Agenda una conversación</a>
-        <a class="pill" href="#trabajos">Ver trabajos</a>
-      </div>
-    </div>
-    <div class="hero-showcase reveal" style="--delay: 200ms">
-      <BrowserFrame src="/media/trabajos/zun-desktop.jpg" alt="Portada de Revista ZUN" domain="revistazun.com" eager />
-      <div class="hero-phone">
-        <PhoneFrame src="/media/trabajos/zun-mobile.jpg" alt="Revista ZUN en el celular" eager />
-      </div>
+  <!-- Barra de navegación superior -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="#" class="topbar-brand">
+        <span class="topbar-dot" aria-hidden="true"></span>
+        <span class="topbar-name">Fabián Jeldes</span>
+        <span class="topbar-role">/ Software, Web y Datos</span>
+      </a>
+      <nav class="topbar-nav" aria-label="Navegación principal">
+        <a href="#capacidades" class="pill topbar-pill">Qué hago</a>
+        <a href="#proyectos" class="pill topbar-pill">Proyectos</a>
+        <a href="#trayectoria" class="pill topbar-pill">Trayectoria</a>
+        <a href="/medios" class="pill topbar-pill">Oferta medios</a>
+        <a href="#contacto" class="pill topbar-pill pill--filled">Contacto</a>
+      </nav>
     </div>
   </header>
 
-  <Ticker
-    items={['Sitios rápidos', 'CMS a la medida', 'Hosting incluido', 'Newsletter y donaciones', 'Soporte mensual']}
-  />
-
-  <main>
-    <section class="wrap problem">
-      <p class="label reveal">* El problema</p>
-      <h2 class="reveal">¿Te suena familiar?</h2>
-      <ul class="rule-list hover-list reveal">
-        <li>WordPress lleno de plugins que nadie se atreve a actualizar.</li>
-        <li>Un sitio lento que espanta lectores desde el celular.</li>
-        <li>Cada cambio de diseño depende de un técnico que no siempre responde.</li>
-        <li>Newsletter, donaciones y sitio viviendo en herramientas separadas.</li>
+  <!-- Hero con propuesta integral y selector interactivo de capturas -->
+  <section class="hero wrap">
+    <div class="hero-text">
+      <p class="label reveal">* Analista Programador · Desarrollo Web · Análisis de Datos</p>
+      <h1 class="reveal" style="--delay: 80ms">Desarrollo web, software y datos ordenados de punta a punta</h1>
+      <p class="lead reveal" style="--delay: 160ms">
+        Construyo sitios rápidos, sistemas a medida y flujos de datos en Python y SQL. Trabajo en español e inglés
+        (C1–C2), desde la arquitectura técnica hasta la entrega con el equipo.
+      </p>
+      <div class="hero-actions reveal" style="--delay: 240ms">
+        <a class="cta" href="#contacto">Conversemos</a>
+        <a class="pill" href="#proyectos">Ver proyectos</a>
+        <a class="pill" href="/medios">Oferta para medios →</a>
+        <button
+          type="button"
+          class="pill copy-email-btn"
+          data-copy-email={contactEmail}
+          aria-label="Copiar correo de contacto directo"
+        >
+          <span class="copy-text">Copiar correo</span>
+          <span class="copy-feedback" aria-live="polite">¡Correo copiado!</span>
+        </button>
+      </div>
+      <ul class="hero-facts reveal" style="--delay: 300ms" aria-label="Datos rápidos de perfil">
+        <li>Santiago, Chile · Remoto</li>
+        <li>Español &amp; Inglés C1–C2</li>
+        <li>2× Beca Google – Talento Digital</li>
       </ul>
-    </section>
+    </div>
 
-    <section class="wrap" id="trabajos">
-      <p class="label reveal">* Trabajos</p>
-      <h2 class="reveal">Sitios que ya están funcionando</h2>
-      <div class="projects">
+    <div class="hero-showcase-wrap reveal" style="--delay: 200ms">
+      <div class="showcase-tabs" role="tablist" aria-label="Cambiar proyecto destacado">
         {
-          projects.map((project, i) => (
-            <div class="reveal" style={`--delay: ${i * 100}ms`}>
-              <a class="project" href={project.url}>
-                <div class="project-media">
-                  <BrowserFrame
-                    src={`/media/trabajos/${project.slug}-desktop.jpg`}
-                    alt={`Sitio de ${project.name}`}
-                    domain={project.domain}
-                  />
-                  <div class="project-phone">
-                    <PhoneFrame src={`/media/trabajos/${project.slug}-mobile.jpg`} alt={`${project.name} en el celular`} />
-                  </div>
-                </div>
-                <p class="project-meta">
-                  {project.kind} / {project.domain}
-                </p>
-                <h3>{project.name}</h3>
-                <p class="project-text">{project.text}</p>
-              </a>
-            </div>
+          webProjects.map((project, idx) => (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={idx === 0 ? 'true' : 'false'}
+              class:list={['showcase-tab', { active: idx === 0 }]}
+              data-showcase-tab={project.slug}
+              data-domain={project.domain}
+              data-desktop={`/media/trabajos/${project.slug}-desktop.jpg`}
+              data-mobile={`/media/trabajos/${project.slug}-mobile.jpg`}
+              data-alt={`Sitio de ${project.name}`}
+              data-stack={project.stack}
+              data-kind={project.kind}
+              data-url={project.url}
+              data-name={project.name}
+            >
+              {project.code} {project.shortLabel}
+            </button>
           ))
         }
       </div>
-    </section>
 
-    <section class="case">
-      <div class="wrap">
-        <p class="label reveal">* Caso real / Revista ZUN</p>
-        <img class="wordmark reveal" src="/zun-wordmark.svg" alt="Revista ZUN" width="1392" height="199" />
-        <h2 class="reveal">De WordPress a un sitio hecho a su medida</h2>
-        <p class="case-note reveal">Esta página usa el mismo sistema de diseño que construimos para la revista.</p>
-        <div class="case-grid">
-          <div class="reveal">
-            <h3>El punto de partida</h3>
-            <p>
-              Una revista digital en WordPress que necesitaba más control sobre su diseño y una forma más simple de
-              publicar.
-            </p>
-          </div>
-          <div class="reveal" style="--delay: 100ms">
-            <h3>Lo que construimos</h3>
-            <ul class="rule-list hover-list">
-              <li>Sitio nuevo en Astro, servido desde Cloudflare.</li>
-              <li>CMS Strapi con formularios ordenados como trabaja la redacción.</li>
-              <li>Migración completa de las notas existentes.</li>
-              <li>Newsletter y donaciones en cada artículo.</li>
-              <li>Portada y convocatorias editables desde el CMS, sin tocar código.</li>
-            </ul>
-          </div>
+      <div class="hero-showcase" id="hero-showcase">
+        <BrowserFrame
+          src="/media/trabajos/zun-desktop.jpg"
+          alt="Sitio de Revista ZUN"
+          domain="revistazun.com"
+          eager
+        />
+        <div class="hero-phone">
+          <PhoneFrame src="/media/trabajos/zun-mobile.jpg" alt="Revista ZUN en el celular" eager />
         </div>
-        <a class="pill reveal" href="https://revistazun.com">Visita revistazun.com</a>
       </div>
-    </section>
 
-    <section class="wrap">
-      <p class="label reveal">* Planes</p>
-      <h2 class="reveal">Una cuota fija al mes</h2>
-      <p class="muted reveal">Pago inicial de USD 400 por diseño, migración y capacitación. Sin contratos de permanencia.</p>
-      <div class="plans">
+      <div class="showcase-caption">
+        <span id="showcase-stack" class="showcase-stack">Astro · Strapi · Cloudflare</span>
+        <a
+          id="showcase-link"
+          class="showcase-link"
+          href="https://revistazun.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Ver sitio ↗
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Marquesina continua con el rango completo de capacidades -->
+  <Ticker
+    items={[
+      'Astro & Vue 3',
+      'Strapi CMS',
+      'PostgreSQL & Supabase',
+      'Python & Análisis de Datos',
+      'Auditoría IA (EN/ES)',
+      'Seguridad & Infraestructura',
+      'Scrum & Kanban',
+    ]}
+  />
+
+  <main>
+    <!-- 01 / Qué hago: 3 pilares ordenados -->
+    <section id="capacidades" class="wrap">
+      <p class="label reveal">* 01 / Qué hago</p>
+      <h2 class="reveal">Tres áreas que se conectan en un mismo sistema</h2>
+      <p class="section-lead reveal">
+        En lugar de habilidades sueltas, combino interfaz, datos e infraestructura para resolver problemas reales sin
+        dependencias opacas.
+      </p>
+      <div class="pillars">
         {
-          plans.map((plan, i) => (
-            <div class="reveal" style={`--delay: ${i * 100}ms`}>
-              <article class:list={['plan', { featured: plan.featured }]}>
-                <p class="label">{plan.name}</p>
-                <p class="price">
-                  {plan.price}
-                  <span>/mes</span>
-                </p>
-                <p class="muted">{plan.audience}</p>
-                <ul class="rule-list">
-                  {plan.features.map((feature) => (
-                    <li>{feature}</li>
+          pillars.map((pillar, i) => (
+            <div class="reveal" style={`--delay: ${i * 90}ms`}>
+              <article class="pillar-card">
+                <p class="label">{pillar.num}</p>
+                <h3>{pillar.title}</h3>
+                <p class="pillar-summary">{pillar.summary}</p>
+                <ul class="rule-list hover-list pillar-list">
+                  {pillar.evidence.map((item) => (
+                    <li>{item}</li>
                   ))}
                 </ul>
-                <a class:list={[plan.featured ? 'cta' : 'pill']} href={contactHref}>
-                  Quiero el plan {plan.name}
-                </a>
+                <ul class="stack-tags" aria-label={`Tecnologías de ${pillar.title}`}>
+                  {pillar.stack.map((tech) => (
+                    <li>{tech}</li>
+                  ))}
+                </ul>
               </article>
             </div>
           ))
@@ -201,40 +405,595 @@ const steps = [
       </div>
     </section>
 
-    <section class="wrap">
-      <p class="label reveal">* Cómo funciona</p>
-      <h2 class="reveal">Cuatro pasos</h2>
-      <ol class="steps">
-        {
-          steps.map((step, i) => (
-            <li class="reveal" style={`--delay: ${i * 80}ms`}>
-              <p class="label">0{i + 1}</p>
-              <h3>{step.title}</h3>
-              <p>{step.text}</p>
-            </li>
-          ))
-        }
-      </ol>
+    <!-- 02 / Proyectos y experiencia aplicada (Visual + Técnico + Filtros) -->
+    <section id="proyectos" class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <p class="label">* 02 / Proyectos y experiencia aplicada</p>
+          <h2>Sitios en producción y trabajo técnico</h2>
+        </div>
+        <div class="filter-bar" role="group" aria-label="Filtrar proyectos por área">
+          <button type="button" class="pill filter-pill active" data-filter="all">Todos</button>
+          <button type="button" class="pill filter-pill" data-filter="web">Web &amp; CMS</button>
+          <button type="button" class="pill filter-pill" data-filter="datos">Datos &amp; Software</button>
+          <button type="button" class="pill filter-pill" data-filter="ia">IA &amp; Calidad</button>
+        </div>
+      </div>
+
+      <!-- Grupo visual: sitios web en producción -->
+      <div class="project-group" data-group="web">
+        <p class="label group-label">Sitios web en producción</p>
+        <div class="projects">
+          {
+            webProjects.map((project, i) => (
+              <div class="reveal filter-item" data-category={project.category} style={`--delay: ${i * 90}ms`}>
+                <a class="project" href={project.url} target="_blank" rel="noopener noreferrer">
+                  <div class="project-media">
+                    <BrowserFrame
+                      src={`/media/trabajos/${project.slug}-desktop.jpg`}
+                      alt={`Sitio de ${project.name}`}
+                      domain={project.domain}
+                    />
+                    <div class="project-phone">
+                      <PhoneFrame
+                        src={`/media/trabajos/${project.slug}-mobile.jpg`}
+                        alt={`${project.name} en el celular`}
+                      />
+                    </div>
+                  </div>
+                  <p class="project-meta">
+                    {project.kind} / {project.domain}
+                  </p>
+                  <h3>{project.name}</h3>
+                  <p class="project-text">{project.text}</p>
+                  <p class="project-stack">{project.stack}</p>
+                </a>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Grupo técnico: fichas blueprint para proyectos de datos, software e IA -->
+      <div class="project-group project-group--tech" data-group="technical">
+        <p class="label group-label">Datos, arquitectura e inteligencia artificial</p>
+        <div class="blueprints">
+          {
+            technicalProjects.map((item, i) => (
+              <div class="reveal filter-item" data-category={item.category} style={`--delay: ${i * 90}ms`}>
+                <article class="blueprint-card">
+                  <p class="blueprint-meta">{item.meta}</p>
+                  <p class="blueprint-org">{item.org}</p>
+                  <h3>{item.title}</h3>
+                  <div class="blueprint-body">
+                    <p>
+                      <strong>Desafío:</strong> {item.problem}
+                    </p>
+                    <p>
+                      <strong>Enfoque:</strong> {item.solution}
+                    </p>
+                  </div>
+                  <p class="blueprint-stack">{item.stack}</p>
+                </article>
+              </div>
+            ))
+          }
+        </div>
+      </div>
     </section>
 
-    <section class="closing">
+    <!-- Caso Destacado: Revista ZUN (Astro + Strapi) -->
+    <section id="caso-zun" class="case">
       <div class="wrap">
-        <p class="label reveal">* Auditoría gratuita</p>
-        <h2 class="reveal">¿Revisamos tu sitio?</h2>
-        <p class="reveal">Te envío una auditoría con tres mejoras concretas para tu sitio actual, la contrates o no.</p>
-        <a class="pill pill--light reveal" href={contactHref}>Pide tu auditoría</a>
+        <p class="label reveal">* Caso destacado / Arquitectura editorial</p>
+        <img class="wordmark reveal" src="/zun-wordmark.svg" alt="Revista ZUN" width="1392" height="199" />
+        <h2 class="reveal">De WordPress a una plataforma editorial a la medida</h2>
+        <p class="case-note reveal">
+          Esta misma página usa el sistema de diseño editorial que construimos para la revista.
+        </p>
+
+        <dl class="case-specs reveal">
+          <div>
+            <dt>Stack</dt>
+            <dd>Astro + Strapi</dd>
+          </div>
+          <div>
+            <dt>Distribución</dt>
+            <dd>Cloudflare estático</dd>
+          </div>
+          <div>
+            <dt>Autonomía</dt>
+            <dd>Portada y notas sin código</dd>
+          </div>
+        </dl>
+
+        <div class="case-grid">
+          <div class="reveal">
+            <h3>El punto de partida</h3>
+            <p>
+              Una revista digital frenada por WordPress, con plugins difíciles de mantener, tiempos de carga lentos en
+              móvil y poco control sobre su identidad visual.
+            </p>
+            <p>
+              Asumí la arquitectura completa: sistema de diseño en código, frontend en Astro, modelado de colecciones en
+              Strapi, migración de archivo y salida a producción.
+            </p>
+          </div>
+          <div class="reveal" style="--delay: 100ms">
+            <h3>Lo que construimos</h3>
+            <ul class="rule-list hover-list">
+              <li>Sitio rápido en Astro, compilado y servido desde la red global de Cloudflare.</li>
+              <li>CMS Strapi con formularios estructurados exactamente como trabaja la redacción.</li>
+              <li>Migración completa de notas, autores, categorías e imágenes existentes.</li>
+              <li>Newsletter y donaciones integradas en cada artículo sin herramientas parcheadas.</li>
+              <li>Portada, especiales y convocatorias editables desde el CMS, sin tocar código.</li>
+            </ul>
+          </div>
+        </div>
+
+        <blockquote class="case-quote reveal">
+          <p>
+            "Pasamos de tener miedo a tocar WordPress por si algo se rompía, a tener una redacción que publica notas
+            completas con fotos y newsletter en minutos. El sitio vuela desde el teléfono y la identidad visual se siente
+            por fin como una revista de verdad."
+          </p>
+          <cite>— Equipo editorial de Revista ZUN</cite>
+        </blockquote>
+
+        <div class="case-actions reveal">
+          <a class="pill" href="https://revistazun.com" target="_blank" rel="noopener noreferrer">
+            Visita revistazun.com ↗
+          </a>
+          <a class="pill pill--filled" href="/medios">
+            ¿Tienes un medio? Ver planes mensuales →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 / Trayectoria y credenciales -->
+    <section id="trayectoria" class="wrap">
+      <p class="label reveal">* 03 / Trayectoria y credenciales</p>
+      <h2 class="reveal">Experiencia, formación y cómo se complementan</h2>
+      <p class="section-lead reveal">
+        Combino formación técnica en programación y datos con años de trabajo directo en operaciones, soporte y trato
+        con clientes en dos idiomas.
+      </p>
+
+      <div class="resume-grid">
+        <div class="reveal">
+          <p class="label resume-col-label">Experiencia aplicada</p>
+          <ul class="rule-list hover-list resume-list">
+            {
+              experience.map((item) => (
+                <li>
+                  <p class="resume-period">{item.period}</p>
+                  <h4>{item.role}</h4>
+                  <p class="resume-org">{item.org}</p>
+                  <p class="resume-detail">{item.detail}</p>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="reveal" style="--delay: 100ms">
+          <p class="label resume-col-label">Formación, becas e idiomas</p>
+          <ul class="rule-list hover-list resume-list">
+            {
+              credentials.map((item) => (
+                <li>
+                  <p class="resume-period">{item.period}</p>
+                  <h4>{item.title}</h4>
+                  <p class="resume-org">{item.org}</p>
+                  <p class="resume-detail">{item.detail}</p>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 / Cómo podemos trabajar -->
+    <section id="servicios" class="wrap">
+      <p class="label reveal">* 04 / Cómo podemos trabajar</p>
+      <h2 class="reveal">Tres formas de colaborar</h2>
+      <p class="section-lead reveal">
+        Según lo que necesites hoy — lanzar una plataforma, ordenar tus datos o sumar un perfil híbrido a tu equipo.
+      </p>
+
+      <div class="modes">
+        {
+          modes.map((mode, i) => (
+            <div class="reveal" style={`--delay: ${i * 90}ms`}>
+              <article class:list={['mode-card', { featured: mode.featured }]}>
+                <div class="mode-head">
+                  <p class="label">{mode.num}</p>
+                  <span class="mode-audience">{mode.audience}</span>
+                </div>
+                <h3>{mode.name}</h3>
+                <p class="mode-summary">{mode.summary}</p>
+                <ul class="rule-list">
+                  {mode.features.map((feature) => (
+                    <li>{feature}</li>
+                  ))}
+                </ul>
+                <div class="mode-actions">
+                  {mode.featured ? (
+                    <a
+                      class="cta"
+                      href={mode.actionHref}
+                      data-select-topic={mode.topic}
+                    >
+                      {mode.actionLabel}
+                    </a>
+                  ) : (
+                    <a
+                      class="pill"
+                      href={mode.actionHref}
+                      data-select-topic={mode.topic}
+                    >
+                      {mode.actionLabel}
+                    </a>
+                  )}
+                  {mode.secondaryTopic && (
+                    <a class="mode-sublink" href="#contacto" data-select-topic={mode.secondaryTopic}>
+                      O cotizar sitio a medida →
+                    </a>
+                  )}
+                </div>
+              </article>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Cierre y contacto inteligente -->
+    <section id="contacto" class="closing">
+      <div class="wrap">
+        <p class="label closing-label reveal">* Contacto directo</p>
+        <h2 class="reveal">¿Conversamos sobre tu proyecto o equipo?</h2>
+        <p class="closing-lead reveal">
+          Elige el motivo y cuéntame en dos líneas qué necesitas resolver. Te respondo directo por correo en español o
+          inglés.
+        </p>
+
+        <div class="topic-picker reveal" role="group" aria-label="Motivo de contacto">
+          {
+            contactTopics.map((topic, idx) => (
+              <button
+                type="button"
+                class:list={['pill pill--light topic-pill', { active: idx === 0 }]}
+                data-topic={topic.id}
+                data-placeholder={topic.placeholder}
+              >
+                {topic.id}
+              </button>
+            ))
+          }
+        </div>
+
+        <form id="contact-form" class="audit-form reveal" novalidate data-contact-email={contactEmail}>
+          <input type="hidden" id="contact-topic" name="topic" value={contactTopics[0].id} />
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="contact-name" class="form-label">Nombre o empresa</label>
+              <input
+                type="text"
+                id="contact-name"
+                name="name"
+                class="form-input"
+                placeholder="Ej: Camila Rojas / Estudio Norte"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="contact-email" class="form-label">Tu correo de respuesta</label>
+              <input
+                type="email"
+                id="contact-email"
+                name="email"
+                class="form-input"
+                placeholder="camila@empresa.cl"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="contact-context" class="form-label">Contexto breve o URL</label>
+              <input
+                type="text"
+                id="contact-context"
+                name="context"
+                class="form-input"
+                placeholder={contactTopics[0].placeholder}
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="cta">Preparar mensaje</button>
+            <button
+              type="button"
+              class="pill pill--light copy-email-btn"
+              data-copy-email={contactEmail}
+              aria-label="Copiar correo de contacto directo"
+            >
+              <span class="copy-text">Copiar correo ({contactEmail})</span>
+              <span class="copy-feedback" aria-live="polite">¡Correo copiado!</span>
+            </button>
+            {
+              calendlyUrl && (
+                <a class="pill pill--light" href={calendlyUrl} target="_blank" rel="noopener noreferrer">
+                  Ver calendario ↗
+                </a>
+              )
+            }
+            {
+              whatsappNumber && (
+                <a
+                  class="pill pill--light"
+                  href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hola Fabián, vi tu sitio y me gustaría conversar.')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  WhatsApp ↗
+                </a>
+              )
+            }
+          </div>
+
+          <div id="contact-feedback" class="audit-feedback" hidden>
+            <div class="feedback-header">
+              <span class="feedback-badge">MENSAJE LISTO</span>
+              <p class="feedback-title">Abrimos tu cliente de correo para enviarlo</p>
+            </div>
+            <p class="feedback-desc">
+              Si no se abrió automáticamente, puedes copiar el texto ya redactado y enviarlo a{' '}
+              <strong>{contactEmail}</strong>:
+            </p>
+            <div class="feedback-box">
+              <pre id="feedback-preview" class="feedback-preview"></pre>
+              <div class="feedback-box-actions">
+                <button type="button" id="copy-msg-btn" class="pill pill--light copy-email-btn">
+                  <span class="copy-text">Copiar mensaje listo</span>
+                  <span class="copy-feedback" aria-live="polite">¡Mensaje copiado!</span>
+                </button>
+                <a id="feedback-mailto-link" class="pill pill--light" href={directMailto}>
+                  Abrir correo manual ↗
+                </a>
+              </div>
+            </div>
+          </div>
+        </form>
       </div>
     </section>
   </main>
 
-  <footer class="wrap">
-    <nav class="footer-links">
-      <a href={contactHref}>Escríbeme</a>
-      <a href="#trabajos">Trabajos</a>
-      <a href="https://revistazun.com">Revista ZUN</a>
-    </nav>
-    <p class="footer-credit">Fabián Jeldes / Desarrollo web para medios</p>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-top wrap">
+      <nav class="footer-links" aria-label="Enlaces de pie de página">
+        <a href={directMailto}>Escríbeme</a>
+        <button
+          type="button"
+          class="footer-copy-btn copy-email-btn"
+          data-copy-email={contactEmail}
+          aria-label="Copiar correo de contacto"
+        >
+          <span class="copy-text">Copiar correo</span>
+          <span class="copy-feedback" aria-live="polite">¡Copiado!</span>
+        </button>
+        <a href="#capacidades">Qué hago</a>
+        <a href="#proyectos">Proyectos</a>
+        <a href="#trayectoria">Trayectoria</a>
+        <a href="/medios">Oferta medios</a>
+        <a href="https://revistazun.com" target="_blank" rel="noopener noreferrer">Revista ZUN</a>
+      </nav>
+      <p class="footer-credit">Fabián Jeldes / Software, Web y Datos</p>
+    </div>
+    <div class="footer-wordmark-wrap" aria-hidden="true">
+      <p class="footer-wordmark">Fabián Jeldes</p>
+    </div>
   </footer>
+
+  <!-- Interactividad ligera sin dependencias: Hero showcase, filtros, copia de correo y contacto inteligente -->
+  <script is:inline>
+    // 1. Selector de proyecto destacado en el Hero
+    const showcaseTabs = document.querySelectorAll('[data-showcase-tab]');
+    const heroShowcase = document.getElementById('hero-showcase');
+    const showcaseStack = document.getElementById('showcase-stack');
+    const showcaseLink = document.getElementById('showcase-link');
+
+    if (heroShowcase && showcaseTabs.length) {
+      const desktopImg = heroShowcase.querySelector('.browser-screen img');
+      const domainLabel = heroShowcase.querySelector('.browser-bar .address');
+      const mobileImg = heroShowcase.querySelector('.phone img');
+
+      showcaseTabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          showcaseTabs.forEach((t) => {
+            t.classList.remove('active');
+            t.setAttribute('aria-selected', 'false');
+          });
+          tab.classList.add('active');
+          tab.setAttribute('aria-selected', 'true');
+
+          const desktopSrc = tab.getAttribute('data-desktop');
+          const mobileSrc = tab.getAttribute('data-mobile');
+          const domain = tab.getAttribute('data-domain');
+          const alt = tab.getAttribute('data-alt');
+          const stack = tab.getAttribute('data-stack');
+          const url = tab.getAttribute('data-url');
+
+          if (desktopImg && desktopSrc) {
+            desktopImg.src = desktopSrc;
+            if (alt) desktopImg.alt = alt;
+          }
+          if (mobileImg && mobileSrc) {
+            mobileImg.src = mobileSrc;
+            if (alt) mobileImg.alt = `${alt} en el celular`;
+          }
+          if (domainLabel && domain) domainLabel.textContent = domain;
+          if (showcaseStack && stack) showcaseStack.textContent = stack;
+          if (showcaseLink && url) showcaseLink.setAttribute('href', url);
+        });
+      });
+    }
+
+    // 2. Filtros de proyectos
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    const filterItems = document.querySelectorAll('.filter-item');
+    const projectGroups = document.querySelectorAll('.project-group');
+
+    filterButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const selected = btn.getAttribute('data-filter') || 'all';
+        filterButtons.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        filterItems.forEach((item) => {
+          const cat = item.getAttribute('data-category');
+          const match = selected === 'all' || cat === selected;
+          item.hidden = !match;
+          if (match) item.classList.add('is-visible');
+        });
+
+        projectGroups.forEach((group) => {
+          const visibleChildren = group.querySelectorAll('.filter-item:not([hidden])').length;
+          group.hidden = visibleChildren === 0;
+        });
+      });
+    });
+
+    // 3. Copiar correo al portapapeles
+    document.querySelectorAll('[data-copy-email]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const email = button.getAttribute('data-copy-email');
+        if (!email) return;
+
+        try {
+          await navigator.clipboard.writeText(email);
+        } catch (err) {
+          const input = document.createElement('input');
+          input.value = email;
+          document.body.appendChild(input);
+          input.select();
+          document.execCommand('copy');
+          document.body.removeChild(input);
+        }
+
+        button.classList.add('copied');
+        setTimeout(() => {
+          button.classList.remove('copied');
+        }, 2500);
+      });
+    });
+
+    // 4. Selector de motivo y formulario de contacto
+    const topicPills = document.querySelectorAll('[data-topic]');
+    const topicInput = document.getElementById('contact-topic');
+    const contextInput = document.getElementById('contact-context');
+
+    const setTopic = (topicName) => {
+      let matched = null;
+      topicPills.forEach((pill) => {
+        const isMatch = pill.getAttribute('data-topic') === topicName;
+        pill.classList.toggle('active', isMatch);
+        if (isMatch) matched = pill;
+      });
+      if (matched) {
+        if (topicInput) topicInput.value = topicName;
+        const placeholder = matched.getAttribute('data-placeholder');
+        if (contextInput && placeholder) contextInput.placeholder = placeholder;
+      }
+    };
+
+    topicPills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        const topic = pill.getAttribute('data-topic');
+        if (topic) setTopic(topic);
+      });
+    });
+
+    document.querySelectorAll('[data-select-topic]').forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        const topic = trigger.getAttribute('data-select-topic');
+        if (topic) setTopic(topic);
+      });
+    });
+
+    const contactForm = document.getElementById('contact-form');
+    const contactFeedback = document.getElementById('contact-feedback');
+    const feedbackPreview = document.getElementById('feedback-preview');
+    const feedbackMailtoLink = document.getElementById('feedback-mailto-link');
+    const copyMsgBtn = document.getElementById('copy-msg-btn');
+
+    if (contactForm) {
+      const contactEmail = contactForm.getAttribute('data-contact-email') || '';
+
+      contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const nameInput = document.getElementById('contact-name');
+        const emailInput = document.getElementById('contact-email');
+        const topic = (topicInput?.value || 'Consulta general').trim();
+        const name = (nameInput?.value || '').trim();
+        const email = (emailInput?.value || '').trim();
+        const context = (contextInput?.value || '').trim();
+
+        if (!name || !email || !context) {
+          if (!name && nameInput) nameInput.focus();
+          else if (!email && emailInput) emailInput.focus();
+          else if (!context && contextInput) contextInput.focus();
+          return;
+        }
+
+        const subject = `[${topic}] ${name}`;
+        const body = `Hola Fabián,
+
+Te escribo desde tu sitio sobre: ${topic}.
+
+* Nombre o empresa: ${name}
+* Correo de respuesta: ${email}
+* Contexto / URL: ${context}
+
+Quedo atento para conversar.
+
+Saludos,
+${name}`;
+
+        const mailtoUrl = `mailto:${contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+        if (feedbackPreview) feedbackPreview.textContent = body;
+        if (feedbackMailtoLink) feedbackMailtoLink.href = mailtoUrl;
+        if (contactFeedback) {
+          contactFeedback.hidden = false;
+          contactFeedback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        window.location.href = mailtoUrl;
+      });
+
+      if (copyMsgBtn && feedbackPreview) {
+        copyMsgBtn.addEventListener('click', async () => {
+          const text = feedbackPreview.textContent || '';
+          try {
+            await navigator.clipboard.writeText(text);
+            copyMsgBtn.classList.add('copied');
+            setTimeout(() => {
+              copyMsgBtn.classList.remove('copied');
+            }, 2500);
+          } catch (e) {
+            // Ignorar si no hay permisos de portapapeles
+          }
+        });
+      }
+    }
+  </script>
 </Base>
 
 <style>
@@ -248,8 +1007,68 @@ const steps = [
     padding-block: var(--gap-l);
   }
 
-  .muted {
+  .section-lead {
     color: var(--gris);
+    max-width: 58ch;
+    margin-bottom: var(--gap-m);
+  }
+
+  /* ---- Topbar ---- */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .topbar-inner {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 12px var(--container-pad);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gap-s);
+  }
+
+  .topbar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--negro);
+    font-weight: 500;
+  }
+
+  .topbar-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--rojo);
+    display: inline-block;
+  }
+
+  .topbar-role {
+    color: var(--gris);
+    font-weight: 400;
+  }
+
+  .topbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .topbar-pill {
+    height: 36px;
+    padding: 0 16px;
+    font-size: 12px;
   }
 
   /* ---- Hero ---- */
@@ -267,7 +1086,7 @@ const steps = [
 
   .lead {
     color: var(--gris);
-    max-width: 44ch;
+    max-width: 48ch;
     margin-bottom: var(--gap-m);
   }
 
@@ -275,6 +1094,65 @@ const steps = [
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
+    margin-bottom: var(--gap-m);
+  }
+
+  .hero-facts {
+    list-style: none;
+    padding: var(--gap-s) 0 0;
+    margin: 0;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gris);
+  }
+
+  .hero-facts li {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  /* Hero Showcase Switcher */
+  .hero-showcase-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .showcase-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .showcase-tab {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 100px;
+    border: 0.5px solid var(--borde-card);
+    background-color: var(--bg);
+    color: var(--gris);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .showcase-tab:hover {
+    border-color: var(--rojo);
+    color: var(--rojo);
+  }
+
+  .showcase-tab.active {
+    background-color: var(--negro);
+    border-color: var(--negro);
+    color: #ffffff;
   }
 
   .hero-showcase {
@@ -301,7 +1179,82 @@ const steps = [
     }
   }
 
-  /* ---- Problem list: ZUN red bar on hover ---- */
+  .showcase-caption {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .showcase-stack {
+    color: var(--gris);
+  }
+
+  .showcase-link {
+    color: var(--negro);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .showcase-link:hover {
+    color: var(--rojo);
+  }
+
+  /* ---- Copy feedback utility ---- */
+  .copy-email-btn {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .copy-email-btn .copy-feedback {
+    display: none;
+    color: inherit;
+    font-weight: 500;
+  }
+
+  .copy-email-btn.copied .copy-text {
+    display: none;
+  }
+
+  .copy-email-btn.copied .copy-feedback {
+    display: inline;
+  }
+
+  .pill.copy-email-btn.copied {
+    background-color: var(--negro);
+    border-color: var(--negro);
+    color: #ffffff;
+  }
+
+  .pill--light.copy-email-btn.copied {
+    background-color: #ffffff;
+    border-color: #ffffff;
+    color: var(--negro);
+  }
+
+  .footer-copy-btn.copied .copy-feedback {
+    color: var(--rojo);
+  }
+
+  /* ---- Lists with hairlines ---- */
+  .rule-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--gap-m);
+    max-width: 60ch;
+  }
+
+  .rule-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
   .hover-list li {
     position: relative;
     padding-left: 0;
@@ -315,43 +1268,134 @@ const steps = [
     top: 12px;
     bottom: 12px;
     width: 3px;
-    background: var(--rojo);
+    background-color: var(--rojo);
     transform: scaleY(0);
     transition: transform 0.3s ease;
   }
 
   .hover-list li:hover {
-    padding-left: 16px;
+    padding-left: 14px;
   }
 
   .hover-list li:hover::before {
     transform: scaleY(1);
   }
 
-  .rule-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 var(--gap-m);
-    max-width: 60ch;
-  }
-
-  .rule-list li {
-    padding: 12px 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  /* ---- Projects: ZUN image card ---- */
-  .projects {
+  /* ---- 01 / Pillars ---- */
+  .pillars {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: var(--gap-m);
     margin-top: var(--gap-m);
   }
 
+  .pillar-card {
+    height: 100%;
+    border: 0.5px solid var(--borde-card);
+    border-radius: 8px;
+    padding: var(--gap-m);
+    background-color: var(--bg);
+    display: flex;
+    flex-direction: column;
+    transition:
+      border-color 0.25s ease,
+      box-shadow 0.25s ease,
+      transform 0.25s ease;
+  }
+
+  .pillar-card:hover {
+    border-color: var(--rojo);
+    box-shadow: 0 10px 26px -12px rgba(0, 0, 0, 0.14);
+    transform: translateY(-2px);
+  }
+
+  .pillar-card h3 {
+    margin-bottom: 12px;
+  }
+
+  .pillar-summary {
+    color: var(--gris);
+    margin-bottom: var(--gap-s);
+  }
+
+  .pillar-list {
+    flex: 1;
+    margin-bottom: var(--gap-s);
+  }
+
+  .pillar-list li {
+    font-size: 0.95rem;
+    padding: 10px 0;
+  }
+
+  .stack-tags {
+    list-style: none;
+    padding: var(--gap-s) 0 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .stack-tags li {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.2;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--negro);
+    background-color: var(--celeste);
+    padding: 5px 9px;
+    border-radius: 4px;
+  }
+
+  /* ---- 02 / Projects + Filters ---- */
+  .section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--gap-m);
+    flex-wrap: wrap;
+    margin-bottom: var(--gap-m);
+  }
+
+  .section-head h2 {
+    margin-bottom: 0;
+  }
+
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .filter-pill {
+    height: 38px;
+    padding: 0 16px;
+    font-size: 12px;
+  }
+
+  .group-label {
+    margin-top: var(--gap-s);
+    margin-bottom: var(--gap-s);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .project-group--tech {
+    margin-top: var(--gap-l);
+  }
+
+  .projects {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--gap-m);
+  }
+
   .project {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     text-decoration: none;
     color: inherit;
     transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -364,7 +1408,7 @@ const steps = [
   .project-media {
     position: relative;
     padding: 0 var(--gap-s) var(--gap-s) 0;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
 
   .project-phone {
@@ -403,9 +1447,94 @@ const steps = [
     color: var(--gris);
   }
 
-  /* ---- Case ---- */
+  .project-stack {
+    margin: 4px 0 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--negro);
+  }
+
+  /* Technical Blueprint cards */
+  .blueprints {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--gap-m);
+  }
+
+  .blueprint-card {
+    height: 100%;
+    padding: var(--gap-m);
+    border: 0.5px solid var(--borde-card);
+    border-radius: 8px;
+    background-color: var(--blanco-cielo);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition:
+      border-color 0.25s ease,
+      box-shadow 0.25s ease,
+      transform 0.25s ease;
+  }
+
+  .blueprint-card:hover {
+    border-color: var(--rojo);
+    box-shadow: 0 10px 26px -12px rgba(0, 0, 0, 0.14);
+    transform: translateY(-2px);
+  }
+
+  .blueprint-meta {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gris);
+  }
+
+  .blueprint-org {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--rojo);
+    font-weight: 500;
+  }
+
+  .blueprint-card h3 {
+    margin: 0 0 4px;
+  }
+
+  .blueprint-body {
+    flex: 1;
+  }
+
+  .blueprint-body p {
+    font-size: 0.98rem;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .blueprint-body p:last-child {
+    margin-bottom: 0;
+  }
+
+  .blueprint-stack {
+    margin: var(--gap-s) 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gris);
+  }
+
+  /* ---- Case: Revista ZUN ---- */
   .case {
-    background: var(--celeste);
+    background-color: var(--celeste);
   }
 
   .wordmark {
@@ -417,6 +1546,37 @@ const steps = [
 
   .case-note {
     color: var(--gris);
+    max-width: 54ch;
+  }
+
+  .case-specs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--gap-m);
+    margin: var(--gap-m) 0;
+    padding: 0;
+  }
+
+  .case-specs div {
+    border-top: 1px solid var(--negro);
+    padding-top: 14px;
+  }
+
+  .case-specs dt {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gris);
+    margin-bottom: 6px;
+  }
+
+  .case-specs dd {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--negro);
   }
 
   .case-grid {
@@ -426,168 +1586,475 @@ const steps = [
     margin-block: var(--gap-m);
   }
 
-  /* ---- Plans: ZUN text card ---- */
-  .plans {
+  .case-quote {
+    margin: var(--gap-m) 0;
+    padding: var(--gap-s) 0 var(--gap-s) var(--gap-m);
+    border-left: 3px solid var(--rojo);
+    max-width: 68ch;
+  }
+
+  .case-quote p {
+    font-size: 1.25rem;
+    line-height: 1.45;
+    font-weight: 500;
+    color: var(--negro);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--gap-s);
+  }
+
+  .case-quote cite {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-style: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gris);
+  }
+
+  .case-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  /* ---- 03 / Resume grid ---- */
+  .resume-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1.05fr 1fr;
+    gap: var(--gap-l);
+    margin-top: var(--gap-m);
+  }
+
+  .resume-col-label {
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--negro);
+    color: var(--negro);
+  }
+
+  .resume-list {
+    max-width: none;
+    margin-bottom: 0;
+  }
+
+  .resume-list li {
+    padding: 18px 0;
+  }
+
+  .resume-period {
+    margin: 0 0 6px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gris);
+  }
+
+  .resume-list h4 {
+    margin: 0 0 4px;
+    color: var(--negro);
+  }
+
+  .resume-org {
+    margin: 0 0 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--rojo);
+  }
+
+  .resume-detail {
+    margin: 0;
+    color: var(--gris);
+    font-size: 0.98rem;
+  }
+
+  /* ---- 04 / Collaboration modes ---- */
+  .modes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--gap-m);
     margin-top: var(--gap-m);
   }
 
-  .plan {
+  .mode-card {
     height: 100%;
-    border: 0.5px solid #8f96b5;
+    border: 0.5px solid var(--borde-card);
     border-radius: 8px;
     padding: var(--gap-m);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    background: var(--bg);
+    background-color: var(--bg);
     transition:
       border-color 0.25s ease,
       box-shadow 0.25s ease,
       transform 0.25s ease;
   }
 
-  .plan:hover {
+  .mode-card:hover {
     border-color: var(--rojo);
-    box-shadow: 0 10px 26px -12px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 10px 26px -12px rgba(0, 0, 0, 0.16);
     transform: translateY(-2px);
   }
 
-  .plan.featured {
+  .mode-card.featured {
     border: 1px solid var(--text);
+    background-color: var(--blanco-cielo);
   }
 
-  .plan.featured:hover {
+  .mode-card.featured:hover {
     border-color: var(--rojo);
   }
 
-  .plan .rule-list {
-    flex: 1;
+  .mode-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
     width: 100%;
+    margin-bottom: 8px;
   }
 
-  .price {
-    font-size: 3rem;
-    font-weight: 600;
-    letter-spacing: -0.05em;
-    line-height: 1;
+  .mode-head .label {
+    margin-bottom: 0;
+  }
+
+  .mode-audience {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gris);
+    text-align: right;
+  }
+
+  .mode-card h3 {
+    margin-bottom: 10px;
+  }
+
+  .mode-summary {
+    color: var(--gris);
+    font-size: 0.98rem;
     margin-bottom: var(--gap-s);
   }
 
-  .price span {
-    font-size: 1rem;
-    font-weight: 400;
-    letter-spacing: 0;
-    color: var(--gris);
-  }
-
-  /* ---- Steps ---- */
-  .steps {
-    list-style: none;
-    padding: 0;
-    margin: var(--gap-m) 0 0;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--gap-m);
-  }
-
-  .steps li {
-    position: relative;
-    border-top: 1px solid var(--text);
-    padding-top: var(--gap-s);
-  }
-
-  .steps li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: -1px;
+  .mode-card .rule-list {
+    flex: 1;
     width: 100%;
-    height: 1px;
-    background: var(--rojo);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    margin-bottom: var(--gap-s);
   }
 
-  .steps li:hover::before {
-    transform: scaleX(1);
+  .mode-card .rule-list li {
+    font-size: 0.95rem;
+    padding: 10px 0;
   }
 
-  .steps p:last-child {
+  .mode-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .mode-sublink {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
     color: var(--gris);
-    margin: 0;
+  }
+
+  .mode-sublink:hover {
+    color: var(--rojo);
   }
 
   /* ---- Closing band ---- */
   .closing {
-    background: var(--negro);
+    background-color: var(--negro);
   }
 
   .closing h2,
   .closing p {
-    color: #fff;
+    color: #ffffff;
   }
 
-  .closing .label {
-    color: rgba(255, 255, 255, 0.6);
+  .closing-label {
+    color: rgba(255, 255, 255, 0.6) !important;
   }
 
-  .closing p:not(.label) {
-    max-width: 50ch;
+  .closing-lead {
+    max-width: 52ch;
+    margin-bottom: var(--gap-m);
+    color: rgba(255, 255, 255, 0.85);
   }
 
-  .pill--light {
-    color: #fff;
-    border-color: #fff;
+  .topic-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: var(--gap-m);
+  }
+
+  .topic-pill {
+    height: 38px;
+    padding: 0 16px;
+    font-size: 12px;
+  }
+
+  .audit-form {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: var(--gap-m);
+    max-width: 920px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.4fr;
+    gap: 16px;
+    margin-bottom: var(--gap-m);
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 18px 20px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background-color: transparent;
+    color: #ffffff;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    transition: border-color 0.2s ease;
+  }
+
+  .form-input::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+
+  .form-input:focus {
+    border-color: var(--rojo);
+    outline: none;
+  }
+
+  .form-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .audit-feedback {
+    margin-top: var(--gap-m);
+    padding: var(--gap-m);
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
+  }
+
+  .feedback-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .feedback-badge {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    background-color: var(--rojo);
+    color: #ffffff;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  .feedback-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  .feedback-desc {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.8) !important;
+    margin-bottom: 12px;
+  }
+
+  .feedback-box {
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    padding: 16px;
+  }
+
+  .feedback-preview {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.5;
+    color: #ffffff;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0 0 14px;
+    max-height: 180px;
+    overflow-y: auto;
+  }
+
+  .feedback-box-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
   }
 
   /* ---- Footer ---- */
-  footer {
-    padding-block: var(--gap-m);
+  .footer {
+    background-color: var(--bg);
+    color: var(--negro);
+    padding-top: var(--gap-m);
+  }
+
+  .footer-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
     text-align: center;
+    padding-bottom: var(--gap-m);
   }
 
   .footer-links {
     display: flex;
     justify-content: center;
-    gap: var(--gap-m);
-    margin-bottom: var(--gap-s);
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
   }
 
   .footer-links a,
+  .footer-copy-btn,
   .footer-credit {
     font-family: var(--font-mono);
     font-size: 0.85rem;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     text-decoration: none;
+    color: var(--negro);
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
   }
 
-  .footer-links a:hover {
+  .footer-copy-btn {
+    cursor: pointer;
+  }
+
+  .footer-links a:hover,
+  .footer-copy-btn:hover {
     color: var(--rojo);
   }
 
   .footer-credit {
     color: var(--gris);
-    margin: 0;
+  }
+
+  .footer-wordmark-wrap {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--container-pad);
+    container-type: inline-size;
+    overflow: hidden;
+    max-height: 11cqw;
+  }
+
+  .footer-wordmark {
+    margin: 0 0 -0.12em -0.055em;
+    text-align: left;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 15.2cqw;
+    white-space: nowrap;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--negro);
+  }
+
+  @media (min-width: 1024px) {
+    .footer-top {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: baseline;
+      text-align: left;
+    }
   }
 
   @media (max-width: 1024px) {
-    .projects {
+    .pillars,
+    .projects,
+    .blueprints,
+    .modes {
       grid-template-columns: 1fr 1fr;
+    }
+
+    .form-grid {
+      grid-template-columns: 1fr;
     }
   }
 
   @media (max-width: 768px) {
+    .topbar-role {
+      display: none;
+    }
+
+    .topbar-pill {
+      height: 32px;
+      padding: 0 10px;
+      font-size: 12px;
+    }
+
     .hero,
+    .pillars,
+    .projects,
+    .blueprints,
+    .case-specs,
     .case-grid,
-    .plans,
-    .steps,
-    .projects {
+    .resume-grid,
+    .modes {
       grid-template-columns: 1fr;
+    }
+
+    .mode-head {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .mode-audience {
+      text-align: left;
     }
   }
 
@@ -596,11 +2063,12 @@ const steps = [
       animation: none;
     }
 
+    .pillar-card,
     .project,
     .project-phone,
-    .plan,
-    .hover-list li,
-    .steps li::before {
+    .blueprint-card,
+    .mode-card,
+    .hover-list li {
       transition: none;
     }
   }

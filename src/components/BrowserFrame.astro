@@ -24,8 +24,8 @@ const { src, alt, domain, eager = false } = Astro.props;
     margin: 0;
     border-radius: 12px;
     overflow: hidden;
-    background: var(--bg);
-    border: 0.5px solid #8f96b5;
+    background-color: var(--bg);
+    border: 0.5px solid var(--borde-card);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
     transition: box-shadow 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
@@ -35,8 +35,8 @@ const { src, alt, domain, eager = false } = Astro.props;
     align-items: center;
     gap: 12px;
     padding: 10px 14px;
-    background: var(--celeste);
-    border-bottom: 0.5px solid #8f96b5;
+    background-color: var(--celeste);
+    border-bottom: 0.5px solid var(--borde-card);
   }
 
   .dots {
@@ -48,16 +48,18 @@ const { src, alt, domain, eager = false } = Astro.props;
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #c9cee0;
+    background-color: var(--gris-cielo);
+    border: 0.5px solid var(--borde-card);
   }
 
   .dots i:first-child {
-    background: var(--rojo);
+    background-color: var(--rojo);
+    border-color: var(--rojo);
   }
 
   .address {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 0.08em;
     color: var(--gris);
   }
